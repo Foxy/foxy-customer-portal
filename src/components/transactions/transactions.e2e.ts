@@ -59,7 +59,7 @@ describe("HTMLFoxyTransactionsElement", () => {
       await interceptAPIRequests(async ({ db, url, page, signIn }) => {
         await signIn();
         await page.setContent(`<${tag} endpoint="${url}"></${tag}>`);
-        await page.waitForChanges();
+        await page.waitForEvent("ready");
 
         const locale = await (await page.find(tag)).getProperty("locale");
 
