@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test:ci:unit
+        run: npm run test:ci:unit
 
   e2e:
     name: Run e2e tests
@@ -63,4 +63,4 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test:ci:e2e
+        run: npm run test:ci:e2e
