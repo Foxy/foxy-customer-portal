@@ -19,10 +19,14 @@ jobs:
 
   unit:
     name: Run unit tests
+    runs-on: ubuntu-latest
     needs: install
-    run: npm test:ci:unit
+    steps:
+      - run: npm test:ci:unit
 
   e2e:
     name: Run e2e tests
+    runs-on: ubuntu-latest
     needs: install
-    run: npm test:ci:e2e
+    steps:
+      - run: npm test:ci:e2e
