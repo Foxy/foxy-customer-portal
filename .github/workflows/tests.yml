@@ -8,7 +8,7 @@ on:
 
 jobs:
   unit:
-    name: Run unit tests
+    name: Unit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,7 +37,7 @@ jobs:
         run: npm run test:ci:unit
 
   e2e:
-    name: Run e2e tests
+    name: E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
