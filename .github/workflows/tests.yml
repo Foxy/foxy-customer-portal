@@ -1,21 +1,28 @@
-name: E2E & Unit Testing
+name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-  build:
+  install:
+    name: Install dependencies
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - name: Install dependencies
-      run: npm ci
-    - name: Run tests
-      run: npm test
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm ci
+
+  unit:
+    name: Run unit tests
+    needs: install
+    run: npm test:ci:unit
+
+  e2e:
+    name: Run e2e tests
+    needs: install
+    run: npm test:ci:e2e
