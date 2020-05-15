@@ -34,8 +34,8 @@
     "build": "npm run build:material && npm run build:lumo",
     "lint": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
     "test:unit": "stencil test --spec --silent --ci",
-    "test:e2e": "stencil test --e2e --silent",
-    "test": "stencil test --spec --e2e --silent --ci --runInBand"
+    "test:e2e": "stencil test --e2e --silent --ci",
+    "test": "stencil test --spec --e2e --silent --ci"
   },
   "config": {
     "commitizen": {

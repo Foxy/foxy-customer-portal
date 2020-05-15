@@ -6,12 +6,26 @@ type PageContext = {
   page: E2EPage;
 };
 
-export async function usePage(cb: Handler<PageContext>) {
-  const page = await newE2EPage({
-    url: "/index.e2e.html",
-    incognito: true
-  });
+const maxRetries = 3;
 
-  await cb({ page });
-  await page.close();
+export async function usePage(cb: Handler<PageContext>) {
+  let error: Error;
+
+  for (let i = 0; i < maxRetries; ++i) {
+    try {
+      const page = await newE2EPage({
+        url: "/index.e2e.html",
+        incognito: true
+      });
+
+      await cb({ page });
+      await page.close().catch(() => 0);
+
+      return;
+    } catch (e) {
+      error = e;
+    }
+  }
+
+  throw error;
 }
