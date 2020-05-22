@@ -100,6 +100,42 @@ export async function mockDatabase(url = "https://foxy.local/s/customer/") {
 
     if (index <= array.length / 3) {
       item.end_date = null;
+
+      if (index === 1) {
+        // custom next date modification rules in the second subscription
+
+        const fourDaysFromNow = new Date();
+        fourDaysFromNow.setDate(fourDaysFromNow.getDate() + 4);
+
+        const nextWeekStart = new Date();
+
+        do {
+          nextWeekStart.setDate(nextWeekStart.getDate() + 1);
+        } while (nextWeekStart.getDay() === 0);
+
+        const nextWeekEnd = new Date(nextWeekStart);
+
+        do {
+          nextWeekEnd.setDate(nextWeekEnd.getDate() + 1);
+        } while (nextWeekEnd.getDay() === 6);
+
+        item._embedded.template_config.allow_next_date_modification = {
+          min: "2d", // can't change to a date earlier than 2 days from now
+          max: "3m", // can't change to a date later than 3 months from now
+          allowedDays: {
+            type: "day", // allow only Mondays, Thursdays and Sundays
+            days: [1, 4, 7]
+          },
+          disallowedDates: [
+            fourDaysFromNow.toISOString().substr(0, 10), // disallow the date 4 days from now
+            [nextWeekStart, nextWeekEnd]
+              .map(v => v.toISOString().substr(0, 10))
+              .join("..") // disallow the entire next week
+          ]
+        };
+      } else {
+        item._embedded.template_config.allow_next_date_modification = true;
+      }
     } else if (index > array.length / 2) {
       const endDate = new Date(item.end_date);
 
@@ -109,6 +145,7 @@ export async function mockDatabase(url = "https://foxy.local/s/customer/") {
       }
 
       item.next_transaction_date = item.end_date;
+      item._embedded.template_config.allow_next_date_modification = false;
     }
 
     if (index === 0) {
