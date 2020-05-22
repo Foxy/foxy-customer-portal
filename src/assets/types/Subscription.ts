@@ -154,7 +154,31 @@ export type Subscription = {
       /**
        * Indicates whether or not a subscription's next date can be modified by the customer. Note that this is included per transaction, though the setting at this point is store-wide.
        */
-      allow_next_date_modification: boolean;
+      allow_next_date_modification:
+        | boolean
+        | {
+            min?: string;
+            max?: string;
+            allowedDays?:
+              | {
+                  type: "day";
+                  /**
+                   * Array with values from 1 through 7. ISO says Monday is the first day of the week, so 1 = Monday, 7 = Sunday.
+                   */
+                  days: number[];
+                }
+              | {
+                  type: "month";
+                  /**
+                   * Array with values from 1 through 31, corresponding to days of the month.
+                   */
+                  days: number[];
+                };
+            /**
+             * A blacklist of specific dates (YYYY-MM-DD) and date ranges (using API filtering style like YYYY-MM-DD..YYYY-MM-DD) to disallow.
+             */
+            disallowedDates?: string[];
+          };
       /**
        * A list of allowed frequencies if frequency modification is enabled for this subscription or `false` otherwise. The list can be empty, in which case it should be treated as `false` value.
        */

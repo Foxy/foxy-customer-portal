@@ -51,8 +51,76 @@
               "properties": {
                 "allow_next_date_modification": {
                   "description": "Indicates whether or not a subscription's next date can be modified by the customer. Note that this is included per transaction, though the setting at this point is store-wide.",
-                  "type": "boolean",
-                  "examples": [true]
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "examples": [true]
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "min": {
+                          "type": "string",
+                          "examples": ["2d"]
+                        },
+                        "max": {
+                          "type": "string",
+                          "examples": ["3m"]
+                        },
+                        "allowedDays": {
+                          "oneOf": [
+                            {
+                              "additionalProperties": false,
+                              "required": ["type", "days"],
+                              "properties": {
+                                "type": {
+                                  "enum": ["day"]
+                                },
+                                "days": {
+                                  "additionalItems": false,
+                                  "uniqueItems": true,
+                                  "description": "Array with values from 1 through 7. ISO says Monday is the first day of the week, so 1 = Monday, 7 = Sunday.",
+                                  "items": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 7
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "additionalProperties": false,
+                              "required": ["type", "days"],
+                              "properties": {
+                                "type": {
+                                  "enum": ["month"]
+                                },
+                                "days": {
+                                  "additionalItems": false,
+                                  "uniqueItems": true,
+                                  "description": "Array with values from 1 through 31, corresponding to days of the month.",
+                                  "items": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 31
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "disallowedDates": {
+                          "description": "A blacklist of specific dates (YYYY-MM-DD) and date ranges (using API filtering style like YYYY-MM-DD..YYYY-MM-DD) to disallow.",
+                          "uniqueItems": true,
+                          "additionalItems": false,
+                          "items": {
+                            "type": "string",
+                            "examples": ["2020-07-01", "2020-08-01..2020-09-01"]
+                          }
+                        }
+                      }
+                    }
+                  ]
                 },
                 "allow_frequency_modification": {
                   "description": "A list of allowed frequencies if frequency modification is enabled for this subscription or `false` otherwise. The list can be empty, in which case it should be treated as `false` value.",
