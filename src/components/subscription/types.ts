@@ -1,6 +1,13 @@
 import { Subscription } from "../../assets/types/Subscription";
 import { Item } from "../../assets/types/Item";
 
+type NonBool<T> = T extends boolean ? never : T;
+type NextDateConfig = Subscription["_embedded"]["template_config"]["allow_next_date_modification"];
+type NextDateRules = Pick<
+  NonBool<NextDateConfig>,
+  "allowedDays" | "disallowedDates"
+>;
+
 export interface Messages {
   /** Generic action approval button text. */
   ok: string;
@@ -131,6 +138,9 @@ export interface Messages {
 
   /** Subscription frequency description expanded from values like 1w, 2m, 14d etc. */
   frequencyDescription: (frequency: string) => string;
+
+  /** When next date modification is restricted to the specific days of week or dates, this will generate a human-readable description of date constraints. */
+  nextDateDescription: (rules: NextDateRules) => string;
 
   /** Vaadin date picker translations. */
   pickerI18n?: VaadinDatePickerI18n;

@@ -1,5 +1,23 @@
 import { Subscription } from "../../assets/types/Subscription";
 
+export function toLocaleList(items: string[], lastSeparator = "and") {
+  let result = "";
+
+  if (items.length === 2) {
+    result += items.join(` ${lastSeparator} `);
+  } else {
+    result += items.slice(0, items.length - 1).join(", ");
+    result += ` ${lastSeparator} ${items[items.length - 1]}`;
+  }
+
+  return result;
+}
+
+export function parseDate(yyyyMmDd: string) {
+  const [yyyy, mm, dd] = yyyyMmDd.split("-");
+  return new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
+}
+
 export function formatDate(date: Date) {
   return [
     String(date.getFullYear()).padStart(4, "0"),

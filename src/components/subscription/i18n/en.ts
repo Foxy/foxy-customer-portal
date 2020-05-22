@@ -1,4 +1,17 @@
+import ordinal from "ordinal";
+import groupNumbers from "group-numbers";
 import { Messages } from "../types";
+import { toLocaleList, parseDate } from "../utils";
+
+const pluralWeekdays = {
+  1: "Mondays",
+  2: "Tuesdays",
+  3: "Wednesdays",
+  4: "Thursdays",
+  5: "Fridays",
+  6: "Saturdays",
+  7: "Sundays"
+};
 
 export const messages: Messages = {
   ok: "OK",
@@ -100,6 +113,55 @@ export const messages: Messages = {
       w: (n: number) => (n > 1 ? `${n} weeks` : "week"),
       d: (n: number) => (n > 1 ? `${n} days` : "day")
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    let result = "";
+
+    // days of week:  "You may choose Mondays – Wednesdays and Fridays."
+    // days of month: "You may choose the 1st, 3rd - 14th and 28th days of the month."
+
+    if ("allowedDays" in rules) {
+      result += "You may choose ";
+
+      const groups = groupNumbers(rules.allowedDays.days, false);
+
+      if (rules.allowedDays.type === "day") {
+        result += toLocaleList(
+          groups.map(group => group.map(day => pluralWeekdays[day]).join(" – "))
+        );
+      } else {
+        const dates = groups.map(group => group.map(ordinal).join(" – "));
+
+        result += `the ${toLocaleList(dates)} `;
+        result += `${dates.length === 1 ? "day" : "days"} of the month`;
+      }
+
+      result += ".";
+    }
+
+    // first sentence:  "You can pick any date except June 3, June 13 and August 6 – September 1."
+    // second sentence: "The new date also can't be June 3, June 13 or August 6 – September 1."
+
+    if ("disallowedDates" in rules) {
+      const isFirst = result.length === 0;
+
+      result += isFirst
+        ? "You can pick any date except "
+        : " The new date also can't be ";
+
+      result += toLocaleList(
+        rules.disallowedDates.map(v => {
+          const range = v.split("..");
+          return range.map(v => messages.date(parseDate(v))).join(" – ");
+        }),
+        isFirst ? "and" : "or"
+      );
+
+      result += ".";
+    }
+
+    return result;
   },
 
   nextDateConfirm: date =>

@@ -105,6 +105,8 @@
     "fast-deep-equal": "^3.1.3",
     "js-cookie": "^2.2.1",
     "typescript": "^4.0.3",
+    "group-numbers": "^1.4.0",
+    "ordinal": "^1.0.3",
     "unfetch": "^4.1.0"
   },
   "husky": {

@@ -1,4 +1,6 @@
+import groupNumbers from "group-numbers";
 import { Messages } from "../types";
+import { toLocaleList, parseDate } from "../utils";
 
 /**
  * Pluralizes the given word. Pure magic aka Russian grammar.
@@ -15,6 +17,16 @@ function pluralize(n: number, accP: string, genP: string, accS: string) {
   if (p1 === 0 || (p1 > 4 && p1 < 10) || (p2 > 10 && p2 < 15)) return genP;
   return p1 > 1 && p1 < 5 ? accP : accS;
 }
+
+const weekdays = {
+  1: "понедельник",
+  2: "вторник",
+  3: "среда",
+  4: "четверг",
+  5: "пятница",
+  6: "суббота",
+  7: "воскресенье"
+};
 
 export const messages: Messages = {
   ok: "Сохранить",
@@ -117,6 +129,39 @@ export const messages: Messages = {
       w: (n: number) => `${n} ${pluralize(n, "недели", "недель", "неделю")}`,
       d: (n: number) => `${n} ${pluralize(n, "дня", "дней", "день")}`
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    let result = "";
+
+    // days of week:  "Доступные дни недели: понедельник – среда и четверг."
+    // days of month: "Доступные числа месяца: 1, 3 - 14 и 28."
+
+    if ("allowedDays" in rules) {
+      const groups = groupNumbers(rules.allowedDays.days, false);
+
+      if (rules.allowedDays.type === "day") {
+        const days = groups.map(v => v.map(day => weekdays[day]).join(" – "));
+        result += `Доступные дни недели: ${toLocaleList(days, "и")}.`;
+      } else {
+        const dates = groups.map(v => v.join(" – "));
+        result += `Доступные числа месяца: ${toLocaleList(dates, "и")}.`;
+      }
+    }
+
+    // example: "Можно выбрать любой день, кроме 3 июня, 13 июня и 6 августа – 1 сентября."
+
+    if ("disallowedDates" in rules) {
+      const dates = rules.disallowedDates.map(v => {
+        const range = v.split("..");
+        return range.map(v => messages.date(parseDate(v))).join(" – ");
+      });
+
+      if (result.length !== 0) result += " ";
+      result += `Можно выбрать любой день, кроме ${toLocaleList(dates, "и")}.`;
+    }
+
+    return result;
   },
 
   nextDateConfirm: date =>

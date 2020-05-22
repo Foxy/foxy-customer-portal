@@ -1,4 +1,18 @@
 import { Messages } from "../types";
+import groupNumbers from "group-numbers";
+import { toLocaleList, parseDate } from "../utils";
+
+const ordinal = (v: number) => `${v}${v === 1 ? "er" : "ème"}`;
+
+const weekdays = {
+  1: "lundi",
+  2: "mardi",
+  3: "mercredi",
+  4: "jeudi",
+  5: "vendredi",
+  6: "samedi",
+  7: "dimanche"
+};
 
 export const messages: Messages = {
   ok: "OK",
@@ -100,6 +114,40 @@ export const messages: Messages = {
       w: (n: number) => (n > 1 ? `${n} semaines` : "1 semaine"),
       d: (n: number) => (n > 1 ? `${n} jours` : "jour")
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    let result = "";
+
+    // days of week:  "Vous pouvez choisir le lundi - mercredi et vendredi."
+    // days of month: "Vous pouvez choisir le 1er, 3ème - 14ème et 28ème jours du mois."
+
+    if ("allowedDays" in rules) {
+      result += "Vous pouvez choisir le ";
+
+      const groups = groupNumbers(rules.allowedDays.days, false);
+
+      if (rules.allowedDays.type === "day") {
+        const days = groups.map(v => v.map(day => weekdays[day]).join(" – "));
+        result += `${toLocaleList(days, "et")}.`;
+      } else {
+        const dates = groups.map(v => v.map(ordinal).join(" – "));
+        result += `${toLocaleList(dates)}.`;
+      }
+    }
+
+    // example: "La date ne peut pas être le 3 juin, le 13 juin ou le 6 août - 1er septembre."
+
+    if ("disallowedDates" in rules) {
+      const dates = rules.disallowedDates.map(v => {
+        const range = v.split("..");
+        return range.map(v => `le ${messages.date(parseDate(v))}`).join(" – ");
+      });
+
+      result += ` La date ne peut pas être ${toLocaleList(dates, "ou")}.`;
+    }
+
+    return result;
   },
 
   nextDateConfirm: date =>
