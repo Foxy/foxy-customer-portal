@@ -195,6 +195,14 @@ export const handlers = [
       db.password = body.password;
     }
 
+    if (body._embedded?.["fx:default_payment_method"]?.save_cc === false) {
+      db.paymentMethod.cc_number_masked = "";
+      db.paymentMethod.cc_exp_month = "";
+      db.paymentMethod.cc_exp_year = "";
+      db.paymentMethod.cc_type = "Visa";
+      db.paymentMethod.save_cc = false;
+    }
+
     if (body._embedded) {
       const embeds = {
         "fx:default_billing_address": db.billingAddress,

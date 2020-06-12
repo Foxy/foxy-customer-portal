@@ -38,6 +38,7 @@ function getLast4Digits(paymentMethod: DefaultPaymentMethod) {
 }
 
 function getSystem(paymentMethod: DefaultPaymentMethod) {
+  if (!paymentMethod.save_cc) return "unknown";
   const system = paymentMethod.cc_type.toLowerCase();
   return system in cover ? (system as System) : "unknown";
 }
@@ -83,7 +84,7 @@ export const PaymentMethod: FunctionalComponent<Props> = ({
           class="mb-6px text-white transition duration-150 pointer-events-auto block w-m h-m flex items-center justify-center rounded-full bg-tint-5 mx-auto hover:bg-tint-10 focus:outline-none focus:shadow-outline-base"
         >
           <iron-icon
-            icon="editor:mode-edit"
+            icon={paymentMethod.save_cc ? "editor:mode-edit" : "add"}
             class="relative iron-icon-18px"
             aria-hidden="true"
           />

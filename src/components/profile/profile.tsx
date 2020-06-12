@@ -9,7 +9,8 @@ import {
   Event,
   Watch,
   h,
-  EventEmitter
+  EventEmitter,
+  getAssetPath
 } from "@stencil/core";
 
 import {
@@ -30,10 +31,13 @@ import { Messages } from "./types";
 import { ErrorOverlay } from "../ErrorOverlay";
 import { APIError } from "../../api/utils";
 import { Skeleton } from "../Skeleton";
+import { PaymentMethod } from "../../assets/types/PaymentMethod";
+import { ConfirmDialog } from "../ConfirmDialog";
 
 @Component({
   tag: "foxy-profile",
   styleUrl: "../../tailwind.css",
+  assetsDir: "assets",
   shadow: true
 })
 export class Profile
@@ -42,6 +46,8 @@ export class Profile
     "reset" | "submit" | "email" | "password_old" | "password",
     HTMLInputElement
   >;
+
+  private removeCcDialog: VaadinDialog;
 
   @Element() readonly root: HTMLFoxyProfileElement;
 
@@ -107,7 +113,10 @@ export class Profile
    */
   @Method()
   async getRemoteState() {
-    const params: GetRequest = {};
+    const params: GetRequest = {
+      zoom: { default_payment_method: true }
+    };
+
     let customer: GetResponse<typeof params> | null = null;
 
     try {
@@ -141,6 +150,37 @@ export class Profile
     }
   }
 
+  /** Removes the default payment method if present. */
+  @Method()
+  async removeDefaultPaymentMethod() {
+    this.isSaving = true;
+
+    try {
+      await patch(this.resolvedEndpoint, {
+        _embedded: {
+          "fx:default_payment_method": {
+            save_cc: false
+          }
+        }
+      });
+
+      this.paymentMethod.cc_number_masked = "";
+      this.paymentMethod.cc_exp_month = "";
+      this.paymentMethod.cc_exp_year = "";
+      this.paymentMethod.save_cc = false;
+
+      await this.setState(this.state);
+      this.update.emit();
+    } catch (e) {
+      console.error(e);
+      const localMessage = this.i18n?.error || this.i18nProvider.en.error;
+      this.error = e instanceof APIError ? e.message : localMessage;
+      this.isErrorDismissable = true;
+    }
+
+    this.isSaving = false;
+  }
+
   private get resolvedEndpoint() {
     let path = "/s/customer";
     if (this.endpoint.length > 0) return this.endpoint + path;
@@ -151,6 +191,28 @@ export class Profile
 
   private get isContentAvailable() {
     return this.i18n !== null && this.state.id !== -1;
+  }
+
+  private get paymentMethod(): PaymentMethod | undefined {
+    return this.state._embedded["fx:default_payment_method"];
+  }
+
+  private get ccLogo() {
+    const type = this.paymentMethod.cc_type.toLowerCase();
+
+    const supported = [
+      "amex",
+      "diners",
+      "discover",
+      "jcb",
+      "maestro",
+      "mastercard",
+      "visa"
+    ];
+
+    return getAssetPath(
+      `./assets/${supported.includes(type) ? type : "unknown"}.svg`
+    );
   }
 
   private async save() {
@@ -268,6 +330,53 @@ export class Profile
             type="reset"
             hidden
           />
+
+          {this.paymentMethod.save_cc && [
+            <h3 class="mt-m mb-s text-l text-header">
+              <Skeleton
+                loaded={this.isContentAvailable}
+                text={() => this.i18n.ccTitle}
+              />
+            </h3>,
+
+            <div class="flex justify-between items-center mb-s">
+              <figure class="flex items-center" data-e2e="cc-number">
+                <img
+                  src={this.ccLogo}
+                  alt={this.i18n.ccLogoAlt(this.paymentMethod)}
+                  class="rounded-s h-s mr-s"
+                />
+
+                <figcaption class="leading-none text-body font-tnum">
+                  <span class="sr-only">{this.i18n.ccNumber}&nbsp;</span>
+                  <span aria-hidden="true">••••&nbsp;</span>
+                  {this.paymentMethod.cc_number_masked.substring(
+                    this.paymentMethod.cc_number_masked.length - 4
+                  )}
+                </figcaption>
+              </figure>
+
+              <vaadin-button
+                class="m-0"
+                data-e2e="btn-remove-cc"
+                data-theme="error small"
+                disabled={this.isSaving}
+                onClick={() => (this.removeCcDialog.opened = true)}
+              >
+                {this.i18n.removeCC}
+              </vaadin-button>
+
+              <ConfirmDialog
+                ref={v => (this.removeCcDialog = v)}
+                text={this.i18n.removeCCWarning}
+                i18n={this.i18n}
+                onOK={() => {
+                  this.removeCcDialog.opened = false;
+                  this.removeDefaultPaymentMethod();
+                }}
+              />
+            </div>
+          ]}
         </form>
 
         <div hidden={this.isEditable} class="text-body pb-m px-m">
@@ -292,10 +401,24 @@ export class Profile
             />
           </h3>
 
-          <div class="truncate">
+          <div class="truncate mb-m">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => "∗∗∗∗∗∗∗∗∗∗"}
+            />
+          </div>
+
+          <h3 class="font-bold text-tertiary truncate">
+            <Skeleton
+              loaded={this.isContentAvailable}
+              text={() => this.i18n.ccTitle}
+            />
+          </h3>
+
+          <div class="truncate" data-e2e="lbl-cc-info">
+            <Skeleton
+              loaded={this.isContentAvailable}
+              text={() => this.i18n.ccDescription(this.paymentMethod)}
             />
           </div>
         </div>

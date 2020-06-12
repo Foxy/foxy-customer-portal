@@ -45,7 +45,17 @@ Type: `Promise<any>`
 
 
 
-### `setState(value: Partial<GetResponse<{ zoom: Record<"subscriptions" | "transactions" | "default_billing_address" | "default_shipping_address" | "default_payment_method", true>; sso: true; }>>) => Promise<void>`
+### `removeDefaultPaymentMethod() => Promise<void>`
+
+Removes the default payment method if present.
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `setState(value: Partial<GetResponse<{ zoom: Record<"default_billing_address" | "default_shipping_address" | "subscriptions" | "transactions" | "default_payment_method", true>; sso: true; }>>) => Promise<void>`
 
 Sets customer object (the state).
 

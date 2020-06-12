@@ -11,12 +11,13 @@
       "properties": {
         "save_cc": {
           "description": "If the customer selected to save their payment information, this will be true. To clear out the payment information, set this to false.",
-          "type": "boolean"
+          "type": "boolean",
+          "examples": [true]
         },
         "cc_type": {
           "description": "The credit card or debit card type. This will be determined automatically once the payment card is saved.",
           "type": "string",
-          "examples": ["Visa", "MasterCard", "Maestro", "Discovery", "JCB"]
+          "examples": ["Visa", "MasterCard", "Maestro", "Discover", "JCB"]
         },
         "cc_number_masked": {
           "description": "A masked version of this payment card showing only the last 4 digits.",

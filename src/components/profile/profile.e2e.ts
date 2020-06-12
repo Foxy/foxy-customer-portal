@@ -6,6 +6,7 @@ import { usePage } from "../../assets/utils/usePage";
 import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
 import { Customer } from "../../assets/types/Customer";
 import { DB } from "../../assets/utils/mockDatabase";
+import { PaymentMethod } from "../../assets/types/PaymentMethod";
 
 describe("HTMLFoxyProfileElement", () => {
   const templates = [
@@ -51,9 +52,10 @@ describe("HTMLFoxyProfileElement", () => {
 
         const html = `<foxy-profile endpoint="${url}"></foxy-profile>`;
         await page.setContent(html);
-        await page.waitForChanges();
+        await page.waitForEvent("ready");
 
         await shouldRenderProfile(page, db.customer);
+        await shouldRenderCard(page, db.paymentMethod);
       });
     });
 
@@ -90,6 +92,29 @@ describe("HTMLFoxyProfileElement", () => {
         await shouldRenderProfile(page, db.customer);
         expect(db.password).toBe(newData.password);
         expect(db.customer.email).toBe(newData.email);
+      });
+    });
+
+    it("allows removing card data as a separate action", async () => {
+      await interceptAPIRequests(async ({ signIn, page, url, db }) => {
+        const html = `<foxy-profile endpoint="${url}"></foxy-profile>`;
+
+        await signIn();
+        await page.setContent(html);
+        await page.waitForEvent("ready");
+
+        await click(page, "foxy-profile >>> [data-e2e=toggle]");
+        await click(page, "foxy-profile >>> [data-e2e=btn-remove-cc]");
+
+        await page.waitForSelector("[data-e2e=btn-ok]");
+        await page.$eval("[data-e2e=btn-ok]", v => (v as any).click());
+        await page.waitFor(1000);
+
+        expect(
+          await page.find("foxy-profile >>> [data-e2e=cc-number]")
+        ).toBeNull();
+
+        expect(db.paymentMethod.save_cc).toBe(false);
       });
     });
   });
@@ -129,6 +154,8 @@ async function shouldRenderEmptyState(page: E2EPage) {
       .then(getters => Promise.all(getters))
       .then(values => values.forEach(v => expect(v).toEqualText("")))
   ]);
+
+  expect(await page.find("foxy-profile >>> [data-e2e=cc-number]")).toBeNull();
 }
 
 async function shouldRenderProfile(page: E2EPage, profile: Customer) {
@@ -142,6 +169,19 @@ async function shouldRenderProfile(page: E2EPage, profile: Customer) {
 
     expect(value).toEqualText("");
   }
+}
+
+async function shouldRenderCard(page: E2EPage, card: PaymentMethod) {
+  const lblCcInfo = await page.find("foxy-profile >>> [data-e2e=lbl-cc-info]");
+  const ccNumber = await page.find("foxy-profile >>> [data-e2e=cc-number]");
+
+  const last4Digits = card.cc_number_masked.substring(
+    card.cc_number_masked.length - 4
+  );
+
+  expect(lblCcInfo.textContent.includes(last4Digits)).toBe(true);
+  expect(lblCcInfo.textContent.includes(card.cc_type)).toBe(true);
+  expect(ccNumber.textContent.includes(last4Digits)).toBe(true);
 }
 
 function remixData(db: DB) {
