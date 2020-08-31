@@ -12,6 +12,7 @@ describe("HTMLFoxyTransactionsElement", () => {
     `<${tag} cols="6"></${tag}>`,
     `<${tag} locale="ru"></${tag}>`,
     `<${tag} locale="fr"></${tag}>`,
+    `<${tag} locale="cy"></${tag}>`,
     `<${tag} endpoint="http://i.dont.exist.local"></${tag}>`
   ];
 

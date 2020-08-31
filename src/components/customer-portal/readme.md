@@ -27,13 +27,13 @@
 
 ## Methods
 
-### `getRemoteState() => Promise<import("/root/projects/foxy-customer-portal/src/api/index").GetResponse<{ zoom: Record<"subscriptions" | "transactions" | "default_billing_address" | "default_shipping_address" | "default_payment_method", true>; sso: true; }>>`
+### `getRemoteState() => Promise<import("/Users/janebentley/Documents/workspace/foxy-customer-portal/src/api/index").GetResponse<{ zoom: Record<"default_billing_address" | "default_shipping_address" | "subscriptions" | "transactions" | "default_payment_method", true>; sso: true; }>>`
 
 Resolves with a customer object (the state).
 
 #### Returns
 
-Type: `Promise<GetResponse<{ zoom: Record<"subscriptions" | "transactions" | "default_billing_address" | "default_shipping_address" | "default_payment_method", true>; sso: true; }>>`
+Type: `Promise<GetResponse<{ zoom: Record<"default_billing_address" | "default_shipping_address" | "subscriptions" | "transactions" | "default_payment_method", true>; sso: true; }>>`
 
 
 
@@ -47,7 +47,7 @@ Type: `Promise<any>`
 
 
 
-### `setState(value: Partial<import("/root/projects/foxy-customer-portal/src/api/index").GetResponse<{ zoom: Record<"subscriptions" | "transactions" | "default_billing_address" | "default_shipping_address" | "default_payment_method", true>; sso: true; }>>) => Promise<void>`
+### `setState(value: Partial<import("/Users/janebentley/Documents/workspace/foxy-customer-portal/src/api/index").GetResponse<{ zoom: Record<"default_billing_address" | "default_shipping_address" | "subscriptions" | "transactions" | "default_payment_method", true>; sso: true; }>>) => Promise<void>`
 
 Updates the customer object, or the state.
 
@@ -76,6 +76,7 @@ graph TD;
   foxy-customer-portal --> foxy-transactions
   foxy-customer-portal --> foxy-address
   foxy-customer-portal --> foxy-profile
+  foxy-subscriptions --> foxy-subscription
   style foxy-customer-portal fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
