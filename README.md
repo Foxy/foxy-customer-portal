@@ -40,7 +40,7 @@ This makes all custom elements from this package aware of each other, while also
 
 Whether you're using the default setup or customizing the portal, you should always attach your event handlers to the `foxy-customer-portal` and not its child elements.
 
-If the default setup doesn't work for the user, they can customize or override it completely using named slots. The following example adds a message to the top of the portal:
+If the default setup doesn't work for you, you can customize or override it completely using named "slots", which are simply inner HTML. The following example adds a message to the top of the portal:
 
 ```html
 <foxy-customer-portal endpoint="https://foxy-demo.foxycart.com">
@@ -154,6 +154,16 @@ Overriding language strings is easy, but **note that this approach will change w
   })
 
 </script>
+```
+
+#### A Note About Slots
+
+Because this is all just HTML, but the custom `foxy-customer-portal` element requires javascript to function, you likely will see a FOUC (Flash of Unstyled Content) in while the page loads. To avoid that, add this bit of CSS to your site:
+
+```css
+foxy-customer-portal:not(.hydrated) > * {
+    display: none;
+}
 ```
 
 ### Vue
