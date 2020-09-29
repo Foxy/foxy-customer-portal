@@ -50,7 +50,10 @@ function createDataTable<T>(): FunctionalComponent<Props<T>> {
                 }}
               >
                 {new Array(props.cols).fill(0).map((_, cell) => (
-                  <td class="block px-m sm:h-l sm:table-cell">
+                  <td
+                    class="block px-m sm:h-l sm:table-cell"
+                    key={`row-${row + props.start}-cell-${cell}`}
+                  >
                     <slot name={`row-${row + props.start}-cell-${cell}`}>
                       {row + props.start < props.items.length &&
                         props.cells[cell] &&

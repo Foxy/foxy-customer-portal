@@ -15,7 +15,7 @@ export async function usePage(cb: Handler<PageContext>) {
     try {
       const page = await newE2EPage({
         url: "/index.e2e.html",
-        incognito: true
+        context: "new"
       });
 
       await cb({ page });

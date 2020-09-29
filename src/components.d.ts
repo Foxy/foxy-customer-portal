@@ -5,9 +5,9 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AddressType, } from "./components/address/types";
-import { FullGetResponse, GetResponse, } from "./api";
-import { Tab, } from "./components/customer-portal/types";
+import { AddressType } from "./components/address/types";
+import { FullGetResponse, GetResponse } from "./api";
+import { Tab } from "./components/customer-portal/types";
 export namespace Components {
     interface FoxyAddress {
         /**
@@ -17,10 +17,7 @@ export namespace Components {
         /**
           * Resolves with a customer object containing address of the default or specified `HTMLFoxyAddressElement.type`.
          */
-        "getRemoteState": () => Promise<GetResponse<{
-            zoom: Record<AddressType, true>;
-            sso: true;
-        }>>;
+        "getRemoteState": () => Promise<GetResponse<{ zoom: Record<AddressType, true>; sso: true; }>>;
         /**
           * Resolves with a customer object containing address of the default or specified `HTMLFoxyAddressElement.type`.
          */
@@ -36,20 +33,7 @@ export namespace Components {
         /**
           * Sets customer object.
          */
-        "setState": (value: Partial<GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>) => Promise<void>;
+        "setState": (value: Partial<FullGetResponse>) => Promise<void>;
         /**
           * Submits the address form, saving changes in the cloud.
          */
@@ -67,20 +51,7 @@ export namespace Components {
         /**
           * Resolves with a customer object (the state).
          */
-        "getRemoteState": () => Promise<import("/Users/dantothefuture/Foxy/foxy-customer-portal/src/api/index").GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>;
+        "getRemoteState": () => Promise<import("/Users/dantothefuture/Foxy/foxy-customer-portal/src/api/index").GetResponse<{ zoom: { default_billing_address: true; default_shipping_address: true; default_payment_method: true; subscriptions: { transactions: true; }; transactions: { items: true; }; }; sso: true; }>>;
         /**
           * Resolves with a customer object (the state).
          */
@@ -100,20 +71,7 @@ export namespace Components {
         /**
           * Updates the customer object, or the state.
          */
-        "setState": (value: Partial<import("/Users/dantothefuture/Foxy/foxy-customer-portal/src/api/index").GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>) => Promise<void>;
+        "setState": (value: Partial<FullGetResponse>) => Promise<void>;
         /**
           * List of links to add to the top nav. You can either use Markdown (`[Foo](https://example.com/foo) [Bar](https://example.com/bar)`) to avoid writing extra JS or assign this property an array where each item is an object with properties `href` for URL and `text` for the display text (both string).  To enable slot generation and routing, use the following URI scheme: `portal://tab-name`. This will create a slot for your tab content that will be displayed only when the appropriate tab link is clicked (works with hash-based routing too).
          */
@@ -149,20 +107,7 @@ export namespace Components {
         /**
           * Sets customer object (the state).
          */
-        "setState": (value: Partial<GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>) => Promise<void>;
+        "setState": (value: Partial<FullGetResponse>) => Promise<void>;
     }
     interface FoxySignIn {
         /**
@@ -182,14 +127,7 @@ export namespace Components {
         /**
           * Resolves with a customer object that's guaranteed to contain the `_embedded["fx:subscriptions"]` array with downloaded subscriptions.
          */
-        "getRemoteState": () => Promise<GetResponse<{
-            zoom: {
-                readonly subscriptions: {
-                    readonly transactions: true;
-                };
-                readonly default_payment_method: true;
-            };
-        }>>;
+        "getRemoteState": () => Promise<GetResponse<{ zoom: { readonly subscriptions: { readonly transactions: true; }; readonly default_payment_method: true; }; }>>;
         /**
           * Resolves with a customer object that's guaranteed to contain the `_embedded["fx:subscriptions"]` array with downloaded subscriptions.
          */
@@ -213,20 +151,7 @@ export namespace Components {
         /**
           * Sets customer object.
          */
-        "setState": (value: Partial<GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>) => Promise<void>;
+        "setState": (value: Partial<FullGetResponse>) => Promise<void>;
         /**
           * List of additional slots to generate for each transaction in the transactions display. Each entry will create a table cell slot named `transaction-${id}-${entry}` and a corresponding table header slot named `transactions-${entry}`. Accepts array of strings (`["foo", "bar"]`) or a serialized list of values separated by a comma (`"foo,bar"`). Items order is respected.
          */
@@ -240,13 +165,7 @@ export namespace Components {
         /**
           * Resolves with a customer object that's guaranteed to contain the `_embedded["fx:subscriptions"]` array with downloaded subscriptions.
          */
-        "getRemoteState": () => Promise<GetResponse<{
-            zoom: {
-                subscriptions: {
-                    transactions: boolean;
-                };
-            };
-        }>>;
+        "getRemoteState": () => Promise<GetResponse<{ zoom: { subscriptions: { transactions: boolean; }; }; }>>;
         /**
           * Resolves with a customer object that's guaranteed to contain the `_embedded["fx:subscriptions"]` array with downloaded subscriptions.
          */
@@ -258,20 +177,7 @@ export namespace Components {
         /**
           * Sets customer object.
          */
-        "setState": (value: Partial<GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>) => Promise<void>;
+        "setState": (value: Partial<FullGetResponse>) => Promise<void>;
     }
     interface FoxyTransactions {
         /**
@@ -285,13 +191,7 @@ export namespace Components {
         /**
           * Resolves with a customer object that's guaranteed to contain the `_embedded["fx:transactions"]` array with downloaded transactions.
          */
-        "getRemoteState": () => Promise<GetResponse<{
-            zoom: {
-                transactions: {
-                    items: boolean;
-                };
-            };
-        }>>;
+        "getRemoteState": () => Promise<GetResponse<{ zoom: { transactions: { items: boolean; }; }; }>>;
         /**
           * Resolves with a customer object that's guaranteed to contain the `_embedded["fx:transactions"]` array with downloaded transactions.
          */
@@ -303,20 +203,7 @@ export namespace Components {
         /**
           * Sets customer object.
          */
-        "setState": (value: Partial<GetResponse<{
-            zoom: {
-                default_billing_address: true;
-                default_shipping_address: true;
-                default_payment_method: true;
-                subscriptions: {
-                    transactions: true;
-                };
-                transactions: {
-                    items: true;
-                };
-            };
-            sso: true;
-        }>>) => Promise<void>;
+        "setState": (value: Partial<FullGetResponse>) => Promise<void>;
     }
 }
 declare global {
