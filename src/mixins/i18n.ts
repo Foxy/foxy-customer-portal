@@ -1,4 +1,4 @@
-export type Language = "en" | "ru" | "fr";
+export type Language = "en" | "ru" | "fr" | "pt-br";
 
 export type Override<T extends Partial<Record<string, any>>> = Partial<
   Record<Language, T>
@@ -8,6 +8,7 @@ export type MessagesProvider<T = any> = {
   en: T;
   ru: () => Promise<T>;
   fr: () => Promise<T>;
+  "pt-br": () => Promise<T>;
 };
 
 export abstract class Mixin<T extends MessagesProvider> {
