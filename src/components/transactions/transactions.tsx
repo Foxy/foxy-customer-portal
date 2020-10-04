@@ -10,12 +10,7 @@ import {
   h
 } from "@stencil/core";
 
-import {
-  FullGetResponse,
-  GetRequest,
-  GetResponse,
-  get as getCustomer
-} from "../../api";
+import { FullGetResponse, GetResponse, get as getCustomer } from "../../api";
 
 import * as vaadin from "../../mixins/vaadin";
 import * as store from "../../mixins/store";
@@ -31,13 +26,19 @@ import { APIError } from "../../api/utils";
 import { Skeleton } from "../Skeleton";
 import { LinkButton } from "../LinkButton";
 
+type StoreMixin = store.Mixin<
+  GetResponse<{
+    zoom: { transactions: { items: true } };
+  }>
+>;
+
 @Component({
   tag: "foxy-transactions",
   styleUrl: "../../tailwind.css",
   shadow: true
 })
 export class Transactions
-  implements vaadin.Mixin, store.Mixin, i18n.Mixin<typeof i18nProvider> {
+  implements vaadin.Mixin, StoreMixin, i18n.Mixin<typeof i18nProvider> {
   private readonly limit = 4;
 
   @State() state = store.defaults.state.call(this);
@@ -104,8 +105,8 @@ export class Transactions
    */
   @Method()
   async getRemoteState() {
-    const params: GetRequest = {
-      zoom: { transactions: true }
+    const params = {
+      zoom: { transactions: { items: true } }
     };
 
     let customer: GetResponse<typeof params> | null = null;
@@ -165,7 +166,8 @@ export class Transactions
         const endpoint = `${this.resolvedEndpoint}/transactions`;
         const res = await getTransactions(endpoint, {
           offset: total,
-          limit: this.limit - (total % this.limit)
+          limit: this.limit - (total % this.limit),
+          zoom: { items: true }
         });
 
         this.state._embedded["fx:transactions"].push(
@@ -178,8 +180,7 @@ export class Transactions
       } catch (e) {
         console.error(e);
 
-        const localMessage =
-          this.i18n?.error || this.i18nProvider.en.error;
+        const localMessage = this.i18n?.error || this.i18nProvider.en.error;
 
         this.error = e instanceof APIError ? e.message : localMessage;
         this.isErrorDismissable = true;

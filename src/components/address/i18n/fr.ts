@@ -16,7 +16,10 @@ export const messages: Messages = {
       postal_code: "Code Postal",
       country: "Pays"
     }[key]),
-  save: "Sauvegarder",
+  save: type =>
+    `Sauvegarder l'adresse de ${
+      type === "default_shipping_address" ? "livraison" : "facturation"
+    }`,
   close: "Fermer",
   error:
     "Une erreur inconnue s'est produite. Veuillez réessayer plus tard ou contactez-nous pour obtenir de l'aide",

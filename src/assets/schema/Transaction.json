@@ -57,12 +57,18 @@
         "_embedded": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["fx:attributes"],
+          "required": ["fx:attributes", "fx:transactions"],
           "properties": {
             "fx:attributes": {
               "type": "array",
               "items": {
                 "$ref": "./Attribute.json"
+              }
+            },
+            "fx:items": {
+              "type": "array",
+              "items": {
+                "$ref": "./Item.json"
               }
             }
           }

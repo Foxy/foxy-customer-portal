@@ -1,7 +1,7 @@
 import { Component, Element, Prop, State, Method } from "@stencil/core";
 import { Event, Watch, EventEmitter, h } from "@stencil/core";
 
-import { FullGetResponse, GetRequest, GetResponse } from "../../api";
+import { FullGetResponse, GetResponse } from "../../api";
 import { get as getSubscriptions } from "../../api/subscriptions";
 import { get as getCustomer } from "../../api";
 
@@ -15,13 +15,21 @@ import { APIError } from "../../api/utils";
 import { ErrorOverlay } from "../ErrorOverlay";
 import { i18nProvider } from "./i18n";
 
+type StoreMixin = store.Mixin<
+  GetResponse<{
+    zoom: {
+      subscriptions: { transactions: true };
+    };
+  }>
+>;
+
 @Component({
   tag: "foxy-subscriptions",
   styleUrl: "../../tailwind.css",
   shadow: true
 })
 export class Subscriptions
-  implements vaadin.Mixin, store.Mixin, i18n.Mixin<typeof i18nProvider> {
+  implements vaadin.Mixin, StoreMixin, i18n.Mixin<typeof i18nProvider> {
   private readonly limit = 4;
 
   @State() state = store.defaults.state.call(this) as FullGetResponse;
@@ -92,8 +100,8 @@ export class Subscriptions
    */
   @Method()
   async getRemoteState() {
-    const params: GetRequest = {
-      zoom: { subscriptions: true }
+    const params = {
+      zoom: { subscriptions: { transactions: true } }
     };
 
     let customer: GetResponse<typeof params> | null = null;

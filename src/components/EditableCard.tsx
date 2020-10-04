@@ -2,6 +2,7 @@ import { FunctionalComponent, h } from "@stencil/core";
 import { Skeleton } from "./Skeleton";
 
 interface Props {
+  i18n: { save: string };
   editable: boolean;
   loaded: boolean;
   saving: boolean;
@@ -47,7 +48,8 @@ export const EditableCard: FunctionalComponent<Props> = (props, children) => (
             disabled={!props.loaded}
             onClick={props.onSave}
           >
-            <iron-icon class="text-xxs" icon="icons:check" />
+            <iron-icon slot="prefix" icon="icons:check" />
+            {props.i18n.save}
           </vaadin-button>
         </div>
       )}

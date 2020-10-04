@@ -14,6 +14,7 @@ import { Subscription } from "../assets/types/Subscription";
 import { Transaction } from "../assets/types/Transaction";
 import { Address } from "../assets/types/Address";
 import { getCookieExpiryDate } from "./authenticate";
+import { Item } from "../assets/types/Item";
 
 export type EditablePaymentMethod = Pick<
   PaymentMethod,
@@ -67,7 +68,7 @@ export interface GetRequest {
     subscriptions?: boolean | Partial<Record<"transactions", boolean>>;
 
     /** Up to 10 latest transactions sorted by date (new to old). */
-    transactions?: boolean;
+    transactions?: boolean | Partial<Record<"items", boolean>>;
   };
 
   /** An SSO URI (will be returned as _links[“fx:checkout”]). */
@@ -81,11 +82,20 @@ export type GetResponse<T extends GetRequest> = Customer &
   Embed<T, "default_shipping_address", "fx:default_shipping_address", Address> &
   DeepEmbed<
     T,
+    { transactions: { items: boolean } },
+    {
+      "fx:transactions": (Transaction & {
+        _embedded: { "fx:items": Item[] };
+      })[];
+    }
+  > &
+  DeepEmbed<
+    T,
     { subscriptions: { transactions: boolean } },
     {
-      "fx:subscriptions": {
+      "fx:subscriptions": (Subscription & {
         _embedded: { "fx:transactions": Transaction[] };
-      };
+      })[];
     }
   > &
   Embed<
@@ -102,7 +112,13 @@ export type GetResponse<T extends GetRequest> = Customer &
   };
 
 export type FullGetResponse = GetResponse<{
-  zoom: Record<keyof GetRequest["zoom"], true>;
+  zoom: {
+    default_billing_address: true;
+    default_shipping_address: true;
+    default_payment_method: true;
+    subscriptions: { transactions: true };
+    transactions: { items: true };
+  };
   sso: true;
 }>;
 
@@ -116,7 +132,7 @@ export type FullGetResponse = GetResponse<{
 export async function get<T extends GetRequest>(
   endpoint: string,
   request: T = {} as T
-) {
+): Promise<GetResponse<T>> {
   const query = new URLSearchParams();
   const hasSSOCookie = Boolean(JSCookie.get("fx.customer.sso"));
 

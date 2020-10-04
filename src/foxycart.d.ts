@@ -84,16 +84,16 @@ interface Window {
         };
 
         /**
-         * Map of locations that are blacklisted for use as shipping address.
-         * Wildcard blacklists the entire country, array blacklists just the included regions.
+         * Map of locations that are disallowed for use as shipping address.
+         * Wildcard disallows the entire country, array disallows just the included regions.
          */
         readonly locations_shipping: {
           readonly [key: string]: "*" | ReadonlyArray<string>;
         };
 
         /**
-         * Map of locations that are blacklisted for use as billing address.
-         * Wildcard blacklists the entire country, array blacklists just the included regions.
+         * Map of locations that are disallowed for use as billing address.
+         * Wildcard disallows the entire country, array disallows just the included regions.
          */
         readonly locations_billing: {
           readonly [key: string]: "*" | ReadonlyArray<string>;

@@ -12,13 +12,7 @@ import {
   EventEmitter
 } from "@stencil/core";
 
-import {
-  FullGetResponse,
-  GetRequest,
-  get,
-  GetResponse,
-  patch
-} from "../../api";
+import { FullGetResponse, get, GetResponse, patch } from "../../api";
 
 import * as vaadin from "../../mixins/vaadin";
 import * as store from "../../mixins/store";
@@ -31,13 +25,15 @@ import { ErrorOverlay } from "../ErrorOverlay";
 import { APIError } from "../../api/utils";
 import { Skeleton } from "../Skeleton";
 
+type StoreMixin = store.Mixin<GetResponse<{}>>;
+
 @Component({
   tag: "foxy-profile",
   styleUrl: "../../tailwind.css",
   shadow: true
 })
 export class Profile
-  implements vaadin.Mixin, store.Mixin, i18n.Mixin<typeof i18nProvider> {
+  implements vaadin.Mixin, StoreMixin, i18n.Mixin<typeof i18nProvider> {
   private fields = {} as Record<
     "reset" | "submit" | "email" | "password_old" | "password",
     HTMLInputElement
@@ -107,7 +103,7 @@ export class Profile
    */
   @Method()
   async getRemoteState() {
-    const params: GetRequest = {};
+    const params = {};
     let customer: GetResponse<typeof params> | null = null;
 
     try {
@@ -194,6 +190,7 @@ export class Profile
   render() {
     return (
       <EditableCard
+        i18n={this.i18n}
         summary={() => this.i18n.title}
         loaded={this.isContentAvailable}
         saving={this.isSaving}

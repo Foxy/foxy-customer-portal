@@ -40,7 +40,7 @@ This makes all custom elements from this package aware of each other, while also
 
 Whether you're using the default setup or customizing the portal, you should always attach your event handlers to the `foxy-customer-portal` and not its child elements.
 
-If the default setup doesn't work for the user, they can customize or override it completely using named slots. The following example adds a message to the top of the portal:
+If the default setup doesn't work for you, you can customize or override it completely using named "slots", which are simply inner HTML. The following example adds a message to the top of the portal:
 
 ```html
 <foxy-customer-portal endpoint="https://foxy-demo.foxycart.com">
@@ -132,15 +132,38 @@ If you aren't doing subscriptions or downloadables, you can override those eleme
 ```
 
 Overriding language strings is easy, but **note that this approach will change when this portal comes out of beta** (at which point the language strings will be configurable from the Foxy admin, like all other language strings):
+
 ```html
 <script>
+  // For the parent component
   document.querySelector('foxy-customer-portal').locale = {
+    "en": {
+      "receipt": "Purchase Order",
+      "receiptLink": "Purchase Order"
+    }
+  };
+  // For child components
+  const foxyPortal = document.querySelector("foxy-customer-portal");
+  foxyPortal.shadowRoot.querySelectorAll('foxy-address').forEach(e => {
+    e.locale = {
       "en": {
-        "receipt": "Purchase Order",
-        "receiptLink": "Purchase Order"
+        "postal_code": "ZIP Code",
+        "save": () => "Save Changes" // Note that some language strings must be functions
       }
-    };
+    }
+  })
+
 </script>
+```
+
+#### A Note About Slots
+
+Because this is all just HTML, but the custom `foxy-customer-portal` element requires javascript to function, you likely will see a FOUC (Flash of Unstyled Content) in while the page loads. To avoid that, add this bit of CSS to your site:
+
+```css
+foxy-customer-portal:not(.hydrated) > * {
+    display: none;
+}
 ```
 
 ### Vue

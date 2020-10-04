@@ -1,4 +1,7 @@
 export interface Messages {
+  /** Save button text. */
+  save: string;
+
   /** Component title text. */
   title: string;
 

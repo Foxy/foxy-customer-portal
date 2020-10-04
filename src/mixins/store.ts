@@ -1,7 +1,6 @@
 import deepmerge from "deepmerge";
 import { EventEmitter } from "@stencil/core";
 import { check as isSignedIn } from "../api/authenticate";
-import { FullGetResponse } from "../api";
 import { getParentPortal } from "../assets/utils/getParentPortal";
 import { customer } from "../assets/defaults";
 
@@ -12,23 +11,26 @@ type StateConsumer =
   | HTMLFoxySubscriptionsElement
   | HTMLFoxyTransactionsElement;
 
-export interface Mixin {
+export interface Mixin<TGetResponse> {
   root: HTMLElement;
-  state: FullGetResponse;
-  update: EventEmitter<FullGetResponse>;
-  getRemoteState: () => Promise<Partial<FullGetResponse> | null>;
-  getState: (forceReload: boolean) => Promise<FullGetResponse>;
-  setState: (value: Partial<FullGetResponse>) => Promise<void>;
+  state: TGetResponse;
+  update: EventEmitter<TGetResponse>;
+  getRemoteState: () => Promise<TGetResponse | null>;
+  getState: (forceReload: boolean) => Promise<TGetResponse>;
+  setState: (value: Partial<TGetResponse>) => Promise<void>;
   componentDidLoad: () => any;
 }
 
 export const defaults = {
-  state(this: Mixin) {
+  state<TGetResponse>(this: Mixin<TGetResponse>) {
     return customer();
   }
 };
 
-export async function getState(this: Mixin, forceReload = false) {
+export async function getState<TGetResponse>(
+  this: Mixin<TGetResponse>,
+  forceReload = false
+) {
   if (forceReload && isSignedIn()) {
     const state = await this.getRemoteState();
 
@@ -41,7 +43,10 @@ export async function getState(this: Mixin, forceReload = false) {
   return this.state;
 }
 
-export async function setState(this: Mixin, value: Partial<FullGetResponse>) {
+export async function setState<TGetResponse>(
+  this: Mixin<TGetResponse>,
+  value: Partial<TGetResponse>
+) {
   this.state = deepmerge(this.state, value, {
     arrayMerge: (_, source) => source
   });
@@ -62,7 +67,9 @@ export async function setState(this: Mixin, value: Partial<FullGetResponse>) {
   await Promise.all(consumers.map(c => c.setState(value)));
 }
 
-export async function componentDidLoad(this: Mixin) {
+export async function componentDidLoad<TGetResponse>(
+  this: Mixin<TGetResponse>
+) {
   const portal = getParentPortal(this.root);
 
   if (portal === null || portal === this.root) {

@@ -1,6 +1,7 @@
 import { Messages } from "../types";
 
 export const messages: Messages = {
+  save: "Сохранить профиль",
   title: "Вход",
   email: "Email",
   password: "Пароль",

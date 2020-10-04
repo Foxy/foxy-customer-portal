@@ -12,6 +12,7 @@ describe("HTMLFoxyProfileElement", () => {
     "<foxy-profile></foxy-profile>",
     '<foxy-profile locale="ru"></foxy-profile>',
     '<foxy-profile locale="fr"></foxy-profile>',
+    '<foxy-profile locale="cy"></foxy-profile>',
     '<foxy-profile endpoint="http://i.dont.exist.local"></foxy-profile>'
   ];
 

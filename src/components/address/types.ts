@@ -12,7 +12,7 @@ export interface Messages {
   label: (field: keyof Address) => string;
 
   /** "Save" button caption. */
-  save: string;
+  save: (type: AddressType) => string;
 
   /** Error overlay action text. */
   close: string;

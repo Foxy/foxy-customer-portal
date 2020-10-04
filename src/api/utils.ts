@@ -7,6 +7,14 @@ export type Zoom = {
   [key: string]: boolean | Zoom;
 };
 
+// export type DeepEmbed<
+//   RequestType,
+//   ZoomType,
+//   EmbedType
+// > = RequestType extends Record<"zoom", ZoomType>
+//   ? { _embedded: [{ _embedded: EmbedType }] }
+//   : {};
+
 export type DeepEmbed<
   RequestType,
   ZoomType,
@@ -20,11 +28,9 @@ export type Embed<
   ZoomKey extends string,
   EmbedKey extends string,
   EmbedType
-> = DeepEmbed<
-  RequestType,
-  Record<ZoomKey, boolean | Zoom>,
-  Record<EmbedKey, EmbedType>
->;
+> = RequestType extends Record<"zoom", Record<ZoomKey, true>>
+  ? { _embedded: Record<EmbedKey, EmbedType> }
+  : {};
 
 export type LinkEmbed<
   RequestType,

@@ -1,7 +1,7 @@
 import JSCookie from "js-cookie";
 import { Transaction } from "../assets/types/Transaction";
 import { ListResponse as Shared } from "../assets/types/ListResponse";
-import { APIError, Fields, serializeQuery } from "./utils";
+import { APIError, Fields, serializeQuery, serializeZoom } from "./utils";
 
 export type ListResponse<K extends string, T = any> = Shared & {
   /** Embedded resources. */
@@ -14,6 +14,11 @@ export type GetRequest = {
 
   /** Number of items to fetch. Defaults to 10. */
   limit?: number;
+
+  /** List of zoomable resources. */
+  zoom?: {
+    items?: boolean;
+  };
 
   /** Ordering options. By default will order by `transaction_date` (desc). */
   order?:
@@ -32,6 +37,10 @@ export type GetResponse = ListResponse<"fx:transactions", Transaction[]>;
  */
 export async function get(endpoint: string, request: GetRequest) {
   const query = serializeQuery(request);
+
+  if (Boolean(request.zoom)) {
+    query.set("zoom", serializeZoom(request.zoom).toString());
+  }
 
   const response = await window.fetch(`${endpoint}?${query.toString()}`, {
     method: "GET",

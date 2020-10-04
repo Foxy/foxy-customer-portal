@@ -10,14 +10,12 @@ import {
   Watch
 } from "@stencil/core";
 
-import { EditableAddress } from "../../api";
-
 import {
   get,
   patch,
   FullGetResponse,
-  GetRequest,
-  GetResponse
+  GetResponse,
+  EditableAddress
 } from "../../api";
 
 import * as vaadin from "../../mixins/vaadin";
@@ -48,13 +46,20 @@ const fields: Partial<EditableAddress> = {
   postal_code: "postal-code"
 };
 
+type StoreMixin = store.Mixin<
+  GetResponse<{
+    zoom: Record<AddressType, true>;
+    sso: true;
+  }>
+>;
+
 @Component({
   tag: "foxy-address",
   styleUrl: "../../tailwind.css",
   shadow: true
 })
 export class Address
-  implements vaadin.Mixin, store.Mixin, i18n.Mixin<typeof i18nProvider> {
+  implements vaadin.Mixin, StoreMixin, i18n.Mixin<typeof i18nProvider> {
   @Element() readonly root: HTMLFoxyAddressElement;
 
   @State() state = store.defaults.state.call(this);
@@ -123,7 +128,7 @@ export class Address
    */
   @Method()
   async getRemoteState() {
-    const params: GetRequest = {
+    const params = {
       zoom: { [this.type]: true },
       sso: true
     };
@@ -139,7 +144,7 @@ export class Address
       this.isErrorDismissable = this.state.id !== -1;
     }
 
-    return customer;
+    return customer as StoreMixin["state"];
   }
 
   /**
@@ -230,7 +235,7 @@ export class Address
       return;
     }
 
-    const blacklist =
+    const disallowedLocations =
       window.FC.json.config[
         this.type === "default_billing_address"
           ? "locations_billing"
@@ -238,7 +243,7 @@ export class Address
       ];
 
     for (const country in window.FC.json.config.locations) {
-      if (blacklist[country] === "*") continue;
+      if (disallowedLocations[country] === "*") continue;
 
       const { cn, r } = window.FC.json.config.locations[country];
 
@@ -246,7 +251,7 @@ export class Address
       this.regions[country] = this.regions[country] || [];
 
       for (const region in r.options) {
-        const filter = blacklist[country];
+        const filter = disallowedLocations[country];
         if (Array.isArray(filter) && filter.includes(region)) continue;
 
         this.regions[country].push({
@@ -270,6 +275,7 @@ export class Address
   render() {
     return (
       <EditableCard
+        i18n={{ save: this.i18n?.save(this.type) ?? "" }}
         saving={this.isSaving}
         editable={this.isEditable}
         summary={() => this.i18n.title(this.type)}

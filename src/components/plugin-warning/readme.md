@@ -4,22 +4,28 @@ This is an **internal** component that displays a warning when it detects some k
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property | Attribute | Description                                 | Type  | Default                           |
 | -------- | --------- | ------------------------------------------- | ----- | --------------------------------- |
 | `locale` | `locale`  | The language to display element content in. | `any` | `i18n.defaults.locale.call(this)` |
 
+
 ## Methods
 
 ### `close() => Promise<void>`
 
-Closes the notification.
+Closes the notification and prevents it
+from appearing again after reload.
 
 #### Returns
 
 Type: `Promise<void>`
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+
+
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

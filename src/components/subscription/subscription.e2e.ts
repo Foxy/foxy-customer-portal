@@ -14,6 +14,7 @@ describe("HTMLFoxySubscriptionElement", () => {
     `<${tag} link="https://i.dont.exist.local"></${tag}>`,
     `<${tag} locale="ru"></${tag}>`,
     `<${tag} locale="fr"></${tag}>`,
+    `<${tag} locale="cy"></${tag}>`,
     `<${tag} endpoint="https://i.dont.exist.local"></${tag}>`
   ];
 

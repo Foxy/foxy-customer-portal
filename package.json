@@ -1,18 +1,17 @@
 {
   "name": "@foxy.io/customer-portal",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.7",
   "description": "A collection of web components created for displaying customer portal info.",
-  "main": "dist/lumo/index.js",
-  "module": "dist/lumo/index.mjs",
-  "es2015": "dist/lumo/esm/index.mjs",
-  "es2017": "dist/lumo/esm/index.mjs",
-  "collection": "dist/lumo/collection/collection-manifest.json",
-  "collection:main": "dist/lumo/collection/index.js",
-  "unpkg": "dist/lumo/foxy/foxy.js",
-  "types": "dist/lumo/types/components.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/foxy/foxy.js",
+  "types": "dist/types/components.d.ts",
   "files": [
-    "dist/",
-    "dist/lumo/"
+    "dist"
   ],
   "scripts": {
     "commit": "git cz",
@@ -64,7 +63,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.19.0",
     "faker": "^4.1.0",
-    "fastify": "^2.13.0",
+    "fastify": "^2.15.1",
     "fastify-cors": "^3.0.3",
     "git-cz": "^4.3.1",
     "husky": "^4.2.3",
@@ -78,7 +77,7 @@
     "path-parser": "^6.1.0",
     "prettier": "^1.19.1",
     "puppeteer": "1.20.0",
-    "replace": "^1.1.5",
+    "replace": "^1.2.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-replace": "^2.2.0",
     "run-for-every-file": "^1.1.0",
@@ -88,7 +87,7 @@
   "license": "MIT",
   "dependencies": {
     "@polymer/iron-icons": "^3.0.1",
-    "@stencil/core": "file:patch/stencil-core-1.13.1-0.tgz",
+    "@stencil/core": "file:patch/stencil-core-2.0.3.tgz",
     "@vaadin/vaadin-button": "2.2.1",
     "@vaadin/vaadin-combo-box": "5.0.6",
     "@vaadin/vaadin-date-picker": "4.0.3",
@@ -104,6 +103,7 @@
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "deepmerge": "^4.2.2",
     "js-cookie": "^2.2.1",
+    "typescript": "^4.0.3",
     "unfetch": "^4.1.0"
   },
   "husky": {

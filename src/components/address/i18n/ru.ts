@@ -16,7 +16,10 @@ export const messages: Messages = {
       postal_code: "Индекс",
       country: "Страна"
     }[key]),
-  save: "Сохранить",
+  save: type =>
+    `Сохранить ${
+      type === "default_shipping_address" ? "адрес доставки" : "платежный адрес"
+    }`,
   close: "Закрыть",
   error:
     "Кажется, у нас что-то сломалось. Пожалуйста, попробуйте еще раз или напишите нам.",

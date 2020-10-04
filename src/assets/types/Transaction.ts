@@ -150,6 +150,33 @@ export type Transaction = {
        */
       visibility: "public" | "private";
     })[];
+    "fx:items"?: {
+      name: string;
+      price: number;
+      quantity: number;
+      quantity_min: number;
+      quantity_max: number;
+      weight: number;
+      code: string;
+      parent_code: string;
+      discount_name: string;
+      discount_type: string;
+      discount_details: string;
+      subscription_frequency: string;
+      subscription_start_date: string;
+      subscription_next_transaction_date: string;
+      subscription_end_date: null;
+      is_future_line_item: boolean;
+      shipto: string;
+      url: string;
+      image: string;
+      length: number;
+      width: number;
+      height: number;
+      expires: number;
+      date_created: null;
+      date_modified: string;
+    }[];
   };
   /**
    * The order number.

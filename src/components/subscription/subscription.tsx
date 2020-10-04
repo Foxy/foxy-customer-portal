@@ -1,7 +1,7 @@
 import { Method, Element, Component, EventEmitter } from "@stencil/core";
 import { h, Prop, Watch, Event, State } from "@stencil/core";
 
-import { GetRequest, GetResponse, FullGetResponse } from "../../api";
+import { GetResponse, FullGetResponse } from "../../api";
 import { patch as updateSubscription } from "../../api/subscriptions";
 import { get as getCustomer } from "../../api";
 import { APIError } from "../../api/utils";
@@ -24,12 +24,21 @@ import { ErrorOverlay } from "../ErrorOverlay";
 import { getCancelUrl } from "./utils";
 import { i18nProvider } from "./i18n";
 
-type Mixins = vaadin.Mixin & store.Mixin & i18n.Mixin<typeof i18nProvider>;
+type StoreMixin = store.Mixin<
+  GetResponse<{
+    zoom: {
+      subscriptions: { transactions: true };
+      default_payment_method: true;
+    };
+  }>
+>;
+
+type Mixins = vaadin.Mixin & StoreMixin & i18n.Mixin<typeof i18nProvider>;
 
 @Component({
   tag: "foxy-subscription",
   styleUrl: "../../tailwind.css",
-  assetsDir: "assets",
+  assetsDirs: ["assets"],
   shadow: true
 })
 export class Subscription implements Mixins {
@@ -118,8 +127,11 @@ export class Subscription implements Mixins {
    */
   @Method()
   async getRemoteState() {
-    const params: GetRequest = {
-      zoom: { subscriptions: true, default_payment_method: true }
+    const params = {
+      zoom: {
+        subscriptions: { transactions: true },
+        default_payment_method: true
+      } as const
     };
 
     let customer: GetResponse<typeof params> | null = null;
