@@ -70,7 +70,6 @@ export const messages: Messages = {
   price: (value, currency) => {
     return value.toLocaleString("ru", {
       style: "currency",
-      minimumFractionDigits: 0,
       currency
     });
   },
