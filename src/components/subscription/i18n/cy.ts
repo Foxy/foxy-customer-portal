@@ -61,7 +61,6 @@ export const messages: Messages = {
   price: (value, currency) => {
     return value.toLocaleString("cy", {
       style: "currency",
-      minimumFractionDigits: 0,
       currency
     });
   },
