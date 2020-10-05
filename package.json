@@ -32,8 +32,8 @@
     "build:lumo": "VAADIN_THEME=lumo NODE_ENV=production stencil build --docs",
     "build": "npm run build:material && npm run build:lumo",
     "lint": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
-    "test:ci:unit": "stencil test --spec --silent --ci --runInBand",
-    "test:ci:e2e": "stencil test --e2e --silent --ci --runInBand",
+    "test:ci:unit": "stencil test --spec --silent --ci --max-workers=2",
+    "test:ci:e2e": "stencil test --e2e --silent --ci --max-workers=2",
     "test:unit": "stencil test --spec",
     "test:e2e": "stencil test --e2e",
     "test": "stencil test --spec --e2e"
