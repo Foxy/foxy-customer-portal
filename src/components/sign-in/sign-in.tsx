@@ -143,7 +143,7 @@ export class SignIn implements vaadin.Mixin, i18n.Mixin<typeof i18nProvider> {
     return (
       <form
         ref={el => (this.formElement = el)}
-        class="p-m flex flex-col items-center justify-center font-lumo"
+        class="p-m flex flex-col items-center justify-center font-lumo leading-s"
         onSubmit={e => this.handleSubmit(e)}
       >
         <slot />

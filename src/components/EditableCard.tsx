@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const EditableCard: FunctionalComponent<Props> = (props, children) => (
-  <div class="overflow-hidden font-lumo relative">
+  <div class="overflow-hidden font-lumo relative leading-s">
     <div
       class={{
         "text-body text-xl select-none flex justify-between items-center px-m h-xl": true,

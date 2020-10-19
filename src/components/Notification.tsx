@@ -29,6 +29,7 @@ export const Notification: FunctionalComponent<Props> = props => (
       }
 
       span.textContent = props.text;
+      span.style.lineHeight = "var(--foxy-line-height-s)";
     }}
   />
 );

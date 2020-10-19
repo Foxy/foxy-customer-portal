@@ -8,7 +8,7 @@ interface Props {
 
 export const ErrorOverlay: FunctionalComponent<Props> = props => (
   <div
-    class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base"
+    class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base leading-s"
     role="alert"
     aria-live="assertive"
     data-e2e="error"

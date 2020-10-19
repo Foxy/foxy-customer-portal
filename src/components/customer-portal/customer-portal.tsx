@@ -267,7 +267,7 @@ export class CustomerPortal
 
   render() {
     return (
-      <article class="font-lumo">
+      <article class="font-lumo leading-s">
         <header
           hidden={!this.isSignedIn}
           class="pt-xl pb-s flex flex-wrap sm:py-l sm:flex-no-wrap"
