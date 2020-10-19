@@ -356,28 +356,28 @@ export class Address
             />
           </h3>
 
-          <div class="truncate" data-e2e="lbl-name">
+          <div data-e2e="lbl-name">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.i18n.getFullName(this.address)}
             />
           </div>
 
-          <div class="mb-m truncate" data-e2e="lbl-address">
+          <div class="mb-m" data-e2e="lbl-address">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.i18n.getAddress(this.address)}
             />
           </div>
 
-          <h3 class="font-bold text-tertiary truncate">
+          <h3 class="font-bold text-tertiary">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.i18n.phone}
             />
           </h3>
 
-          <div class="truncate" data-e2e="lbl-phone">
+          <div data-e2e="lbl-phone">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.address.phone}

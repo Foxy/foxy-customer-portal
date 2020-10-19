@@ -268,28 +268,28 @@ export class Profile
         </form>
 
         <div hidden={this.isEditable} class="text-body pb-m px-m">
-          <h3 class="font-bold text-tertiary truncate">
+          <h3 class="font-bold text-tertiary">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.i18n.email}
             />
           </h3>
 
-          <div class="truncate mb-m" data-e2e="lbl-email">
+          <div class="mb-m" data-e2e="lbl-email">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.state.email}
             />
           </div>
 
-          <h3 class="font-bold text-tertiary truncate">
+          <h3 class="font-bold text-tertiary">
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => this.i18n.password}
             />
           </h3>
 
-          <div class="truncate">
+          <div>
             <Skeleton
               loaded={this.isContentAvailable}
               text={() => "∗∗∗∗∗∗∗∗∗∗"}
