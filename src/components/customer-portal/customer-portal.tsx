@@ -26,6 +26,12 @@ import { Details } from "../Details";
 import { Messages, Tab } from "./types";
 import { Skeleton } from "../Skeleton";
 
+/**
+ * @part transaction-id - Targets each cell in the ID column of the nested `foxy-transactions` element.
+ * @part transaction-date - Targets each cell in the Date column of the nested `foxy-transactions` element.
+ * @part transaction-total - Targets each cell in the Total column of the nested `foxy-transactions` element.
+ * @part transaction-receipt - Targets each cell in the Recept column of the nested `foxy-transactions` element.
+ */
 @Component({
   tag: "foxy-customer-portal",
   styleUrl: "../../tailwind.css",
@@ -359,6 +365,7 @@ export class CustomerPortal
                           <foxy-transactions
                             locale={this.locale}
                             endpoint={this.endpoint}
+                            exportparts="id:transaction-id,date:transaction-date,total:transaction-total,receipt:transaction-receipt"
                           />
                         </slot>
                       </Details>

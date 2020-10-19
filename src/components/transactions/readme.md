@@ -57,6 +57,16 @@ Type: `Promise<void>`
 
 
 
+## Shadow Parts
+
+| Part        | Description                             |
+| ----------- | --------------------------------------- |
+| `"date"`    | Targets each cell in the Date column.   |
+| `"id"`      | Targets each cell in the ID column.     |
+| `"receipt"` | Targets each cell in the Recept column. |
+| `"total"`   | Targets each cell in the Total column.  |
+
+
 ## Dependencies
 
 ### Used by
