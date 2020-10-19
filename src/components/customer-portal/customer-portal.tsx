@@ -272,7 +272,7 @@ export class CustomerPortal
           hidden={!this.isSignedIn}
           class="pt-xl pb-s flex flex-wrap sm:py-l sm:flex-no-wrap"
         >
-          <h1 class="text-header text-xxl px-m text-center flex-1 sm:text-left">
+          <h1 class="text-header text-xxl px-m text-center flex-1 sm:flex sm:items-center sm:text-left">
             <Skeleton
               loaded={this.i18n && this.state.id !== -1}
               text={() => this.i18n.greeting(this.state.first_name)}
