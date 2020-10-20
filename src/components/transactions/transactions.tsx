@@ -32,6 +32,12 @@ type StoreMixin = store.Mixin<
   }>
 >;
 
+/**
+ * @part id - Targets each cell in the ID column.
+ * @part date - Targets each cell in the Date column.
+ * @part total - Targets each cell in the Total column.
+ * @part receipt - Targets each cell in the Recept column.
+ */
 @Component({
   tag: "foxy-transactions",
   styleUrl: "../../tailwind.css",
@@ -222,7 +228,7 @@ export class Transactions
         ]}
         cells={[
           item => (
-            <div class="flex items-center font-tnum text-s sm:text-m">
+            <div class="flex items-center font-tnum text-s sm:text-m" part="id">
               <div class="text-contrast-50 mr-s sm:hidden">
                 <Skeleton
                   loaded={Boolean(this.i18n)}
@@ -233,7 +239,10 @@ export class Transactions
             </div>
           ),
           item => (
-            <div class="flex items-center font-tnum text-s sm:text-m">
+            <div
+              class="flex items-center font-tnum text-s sm:text-m"
+              part="date"
+            >
               <div class="text-contrast-50 mr-s sm:hidden">
                 <Skeleton
                   loaded={Boolean(this.i18n)}
@@ -248,7 +257,10 @@ export class Transactions
             </div>
           ),
           item => (
-            <div class="font-tnum select-none text-xxl font-thin sm:font-normal sm:text-m">
+            <div
+              class="font-tnum select-none text-xxl font-thin sm:font-normal sm:text-m"
+              part="total"
+            >
               {item.total_order.toLocaleString(this.locale, {
                 style: "currency",
                 currency: item.currency_code
@@ -256,7 +268,7 @@ export class Transactions
             </div>
           ),
           item => (
-            <div class="-mx-s">
+            <div class="-mx-s" part="receipt">
               <LinkButton
                 target="_blank"
                 href={item._links["fx:receipt"].href}

@@ -277,7 +277,7 @@ export class Subscription implements Mixins {
   render() {
     return (
       <details
-        class="relative bg-base font-lumo overflow-hidden"
+        class="relative bg-base font-lumo overflow-hidden leading-s"
         onToggle={() => (this.open = !this.open)}
       >
         {this.error && (

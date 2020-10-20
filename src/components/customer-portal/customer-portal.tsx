@@ -26,6 +26,12 @@ import { Details } from "../Details";
 import { Messages, Tab } from "./types";
 import { Skeleton } from "../Skeleton";
 
+/**
+ * @part transaction-id - Targets each cell in the ID column of the nested `foxy-transactions` element.
+ * @part transaction-date - Targets each cell in the Date column of the nested `foxy-transactions` element.
+ * @part transaction-total - Targets each cell in the Total column of the nested `foxy-transactions` element.
+ * @part transaction-receipt - Targets each cell in the Recept column of the nested `foxy-transactions` element.
+ */
 @Component({
   tag: "foxy-customer-portal",
   styleUrl: "../../tailwind.css",
@@ -267,12 +273,12 @@ export class CustomerPortal
 
   render() {
     return (
-      <article class="font-lumo">
+      <article class="font-lumo leading-s">
         <header
           hidden={!this.isSignedIn}
           class="pt-xl pb-s flex flex-wrap sm:py-l sm:flex-no-wrap"
         >
-          <h1 class="truncate text-header text-xxl px-m text-center flex-1 sm:text-left">
+          <h1 class="text-header text-xxl px-m text-center flex-1 sm:flex sm:items-center sm:text-left">
             <Skeleton
               loaded={this.i18n && this.state.id !== -1}
               text={() => this.i18n.greeting(this.state.first_name)}
@@ -359,6 +365,7 @@ export class CustomerPortal
                           <foxy-transactions
                             locale={this.locale}
                             endpoint={this.endpoint}
+                            exportparts="id:transaction-id,date:transaction-date,total:transaction-total,receipt:transaction-receipt"
                           />
                         </slot>
                       </Details>

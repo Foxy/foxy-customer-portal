@@ -24,7 +24,7 @@ export const Details: FunctionalComponent<Props> = (props, children) => (
       }}
     >
       <div class="text-xl select-none flex justify-between items-center px-m h-xl">
-        <div class="flex-1 truncate mr-m">
+        <div class="flex-1 mr-m">
           <Skeleton loaded={props.loaded} text={props.summary} />
         </div>
         <iron-icon

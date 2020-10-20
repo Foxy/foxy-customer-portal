@@ -208,7 +208,7 @@ export class Subscriptions
 
   render() {
     return (
-      <div class="flex flex-wrap justify-between">
+      <div class="flex flex-wrap justify-between leading-s font-lumo">
         {this.displayedSubscriptions.map((value, index) => [
           <div
             class={{

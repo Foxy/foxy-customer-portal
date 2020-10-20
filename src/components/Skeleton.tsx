@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const Skeleton: FunctionalComponent<Props> = props => (
-  <div class="relative" aria-busy={!props.loaded} role="alert">
+  <div class="relative leading-s" aria-busy={!props.loaded} role="alert">
     {props.loaded
       ? props.text()
       : [

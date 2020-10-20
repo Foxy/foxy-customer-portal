@@ -59,6 +59,16 @@ Type: `Promise<void>`
 
 
 
+## Shadow Parts
+
+| Part                    | Description                                                                       |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `"transaction-date"`    | Targets each cell in the Date column of the nested `foxy-transactions` element.   |
+| `"transaction-id"`      | Targets each cell in the ID column of the nested `foxy-transactions` element.     |
+| `"transaction-receipt"` | Targets each cell in the Recept column of the nested `foxy-transactions` element. |
+| `"transaction-total"`   | Targets each cell in the Total column of the nested `foxy-transactions` element.  |
+
+
 ## Dependencies
 
 ### Depends on

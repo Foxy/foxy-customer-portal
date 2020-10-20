@@ -79,7 +79,9 @@ export class PluginWarning
           action.setAttribute("theme", "small");
           action.addEventListener("click", () => this.close());
 
+          layout.style.lineHeight = "var(--foxy-line-height-s)";
           layout.append(message, action);
+
           root.append(layout);
         }}
       />

@@ -71,7 +71,7 @@ export const Summary: FunctionalComponent<Props> = ({
 
         <div class="px-s flex-1 min-w-0">
           <div class="min-w-0">
-            <p class="leading-xs text-body text-m truncate font-medium origin-top-left md:text-l">
+            <p class="leading-xs text-body text-m font-medium origin-top-left md:text-l">
               <Skeleton
                 loaded={Boolean(subscription)}
                 text={() => getTitle(i18n, subscription)}
@@ -80,7 +80,7 @@ export const Summary: FunctionalComponent<Props> = ({
 
             <p
               class={{
-                "leading-xs text-xs truncate md:text-m": true,
+                "leading-xs text-xs md:text-m": true,
                 "text-tertiary": open || status === "cancelled",
                 "text-success": status === "active",
                 "text-error": status === "failed"

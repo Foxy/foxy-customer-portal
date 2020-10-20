@@ -21,7 +21,7 @@ interface Props<T> {
 
 function createDataTable<T>(): FunctionalComponent<Props<T>> {
   return (props, children = []) => (
-    <div class="relative flex flex-wrap justify-between font-lumo whitespace-no-wrap">
+    <div class="relative flex flex-wrap justify-between font-lumo whitespace-no-wrap leading-s">
       <div class="w-full overflow-auto">
         <table class="block w-full text-left text-body border-collapse sm:table">
           <thead class="hidden sm:table-header-group">
