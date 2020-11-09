@@ -47,9 +47,6 @@ export interface Messages {
   /** Credit card element group label. */
   ccRegion: string;
 
-  /** Included items region label. */
-  items: string;
-
   /** Transaction receipt link text. */
   receipt: string;
 
@@ -101,6 +98,9 @@ export interface Messages {
   /** Text of the link to the subscription cancellation page. */
   cancelSubscription: string;
 
+  /** Sub modify link text (if present). */
+  editItems: string;
+
   /** Any localized date in the component. */
   date: (date: Date | string) => string;
 
@@ -109,6 +109,9 @@ export interface Messages {
 
   /** Any localized price in the component. */
   price: (value: number, currency: string) => string;
+
+  /** Items section header including the number of items in a subscription. */
+  items: (length: number) => string;
 
   /** The top text summarizing the subscription. */
   summary: (items: Item[]) => string;

@@ -16,7 +16,6 @@ export const messages: Messages = {
   ccUpdateFailed: "Mise à jour carte",
   ccRegion: "Méthode de paiement",
   ccEdit: "Modifier informations de carte.",
-  items: "Articles ajoutés",
   receipt: "Reçu",
   failed: "Échoué",
   active: "Active",
@@ -38,6 +37,8 @@ export const messages: Messages = {
   updateNotification: "Abonnement mis à jour.",
   errorNotification:
     "Une erreur inconnue s'est produite. Veuillez réessayer plus tard ou contactez-nous pour obtenir de l'aide",
+  editItems: "Modifier",
+
   date: date => {
     return new Date(date).toLocaleDateString("fr", {
       month: "long",
@@ -57,6 +58,8 @@ export const messages: Messages = {
       currency
     });
   },
+
+  items: length => `${length} ${length === 1 ? "article" : "articles"}`,
 
   summary: items => {
     const { name } = [...items].sort((a, b) => a.price - b.price).pop();

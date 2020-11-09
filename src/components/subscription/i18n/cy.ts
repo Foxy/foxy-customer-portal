@@ -22,7 +22,6 @@ export const messages: Messages = {
   ccUpdateFailed: "Diweddaru cardyn",
   ccRegion: "Modd o dalu",
   ccEdit: "Addasu manylion cardyn.",
-  items: "Eitemau a gynwyswyd",
   receipt: "Derbyneb",
   failed: "Methodd",
   active: "Cyfredol",
@@ -44,6 +43,7 @@ export const messages: Messages = {
   updateNotification: "Diweddarwyd y danysgrifiad.",
   errorNotification:
     "Mae gwall anhysbys wedi digwydd. Rhowch gynnig arall arni yn nes ymlaen neu cysylltwch â ni am help..",
+  editItems: "Golygu",
 
   date: date => {
     return new Date(date).toLocaleDateString("cy", {
@@ -64,6 +64,8 @@ export const messages: Messages = {
       currency
     });
   },
+
+  items: length => `${length} eitem`,
 
   summary: items => {
     const { name } = [...items].sort((a, b) => a.price - b.price).pop();

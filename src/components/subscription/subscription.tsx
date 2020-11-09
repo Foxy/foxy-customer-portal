@@ -333,13 +333,30 @@ export class Subscription implements Mixins {
                 />
               </div>
 
-              {this._template._embedded["fx:items"].map(item => (
-                <CartItem
-                  i18n={this.i18n}
-                  template={this._template}
-                  item={item}
-                />
-              ))}
+              <section>
+                <div class="flex items-center justify-between px-m mb-xs">
+                  <h1 class="text-s text-secondary">
+                    {this.i18n.items(
+                      this._template._embedded["fx:items"].length
+                    )}
+                  </h1>
+
+                  <Link
+                    size="s"
+                    href="/todo"
+                    text={this.i18n.editItems}
+                    color="primary"
+                  />
+                </div>
+
+                {this._template._embedded["fx:items"].map(item => (
+                  <CartItem
+                    i18n={this.i18n}
+                    template={this._template}
+                    item={item}
+                  />
+                ))}
+              </section>
 
               <div class="px-m">
                 {this._isNextDateEditable && (

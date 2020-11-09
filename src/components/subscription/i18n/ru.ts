@@ -32,7 +32,6 @@ export const messages: Messages = {
   ccUpdateFailed: "Исправить проблему",
   ccEdit: "Изменить данные карты.",
   ccRegion: "Способ оплаты",
-  items: "Included items",
   receipt: "Показать чек",
   failed: "Ошибка платежа",
   active: "Успешный платеж",
@@ -53,6 +52,7 @@ export const messages: Messages = {
   updateNotification: "Подписка обновлена.",
   errorNotification:
     "Кажется, у нас что-то сломалось. Пожалуйста, попробуйте еще раз или напишите нам.",
+  editItems: "Изменить",
 
   date: date => {
     return new Date(date).toLocaleDateString("ru", {
@@ -73,6 +73,8 @@ export const messages: Messages = {
       currency
     });
   },
+
+  items: n => `${n} ${pluralize(n, "товара", "товаров", "товар")}`,
 
   summary: items => {
     const { name } = [...items].sort((a, b) => a.price - b.price).pop();
