@@ -1,12 +1,14 @@
-import { usePage } from "../../assets/utils/usePage";
-import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
-import { messages } from "./i18n/en";
-import { getUpdateUrl, formatDate } from "./utils";
+import { formatDate, getUpdateUrl } from "./utils";
+
 import { Subscription } from "../../assets/types/Subscription";
 import { click } from "../../assets/utils/click";
+import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
+import { messages } from "./i18n/en";
+import { usePage } from "../../assets/utils/usePage";
 
 const WEEK = 604800000;
 const tag = "foxy-subscription";
+const SUB_MODIFY_URL = "https://store.foxy.test/modify";
 
 describe("HTMLFoxySubscriptionElement", () => {
   const templates = [
@@ -122,7 +124,11 @@ describe("HTMLFoxySubscriptionElement", () => {
         await page.setContent(content);
         await page.waitForEvent("ready");
 
+        const subModifySelector = `${tag} >>> a[href="${SUB_MODIFY_URL}"]`;
+        const subModifyLink = await page.find(subModifySelector);
         const productEls = await page.findAll(`${tag} >>> [data-e2e=product]`);
+
+        expect(subModifyLink).toBeNull();
 
         for (let i = 0; i < productEls.length; ++i) {
           const element = productEls[i];
@@ -137,6 +143,25 @@ describe("HTMLFoxySubscriptionElement", () => {
           expect(element.textContent.includes(product.name));
           expect(element.textContent.includes(description)).toBe(true);
         }
+      });
+    });
+
+    it("displays edit link when active subscription has a modification link", async () => {
+      await interceptAPIRequests(async ({ db, url, page, signIn }) => {
+        const subscription = db.subscriptions[0];
+        const content = `<${tag} locale="en" endpoint="${url}"></${tag}>`;
+
+        activateSubscription(subscription);
+        enableSubModifyLink(subscription);
+
+        await signIn();
+        await page.setContent(content);
+        await page.waitForEvent("ready");
+
+        const subModifySelector = `${tag} >>> a[href="${SUB_MODIFY_URL}"]`;
+        const subModifyLink = await page.find(subModifySelector);
+
+        expect(subModifyLink).not.toBeNull();
       });
     });
 
@@ -268,6 +293,13 @@ function activateSubscription(subscription: Subscription) {
   subscription.next_transaction_date = new Date(
     Date.now() + WEEK
   ).toISOString();
+}
+
+function enableSubModifyLink(subscription: Subscription) {
+  subscription._links["fx:sub_modification_url"] = {
+    href: SUB_MODIFY_URL,
+    title: "Modify this subscription"
+  };
 }
 
 function enableNextDateModification(subscription: Subscription) {

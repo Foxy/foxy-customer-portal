@@ -341,7 +341,7 @@ export class Subscription implements Mixins {
                     )}
                   </h1>
 
-                  {subModLink && (
+                  {subModLink && this._subscription?.is_active && (
                     <Link
                       size="s"
                       href={subModLink.href}
