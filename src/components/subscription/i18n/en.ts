@@ -16,7 +16,6 @@ export const messages: Messages = {
   ccUpdateFailed: "Update card",
   ccRegion: "Payment method",
   ccEdit: "Edit card details.",
-  items: "Included items",
   receipt: "Receipt",
   failed: "Failed",
   active: "Active",
@@ -38,6 +37,7 @@ export const messages: Messages = {
   updateNotification: "Subscription updated.",
   errorNotification:
     "An unknown error has occurred. Please try again later or contact us for help.",
+  editItems: "Edit",
 
   date: date => {
     return new Date(date).toLocaleDateString("en", {
@@ -58,6 +58,8 @@ export const messages: Messages = {
       currency
     });
   },
+
+  items: length => `${length} ${length === 1 ? "item" : "items"}`,
 
   summary: items => {
     const { name } = [...items].sort((a, b) => a.price - b.price).pop();

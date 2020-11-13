@@ -125,6 +125,23 @@ export type Subscription = {
        */
       type?: string;
     };
+    /**
+     * A named resource link of a particular type.
+     */
+    "fx:sub_modification_url"?: {
+      /**
+       * A few words describing where this link points.
+       */
+      title: string;
+      /**
+       * An absolute URL of the resource.
+       */
+      href: string;
+      /**
+       * Link type (optional, value depending on the context).
+       */
+      type?: string;
+    };
   };
   /**
    * Embedded content.

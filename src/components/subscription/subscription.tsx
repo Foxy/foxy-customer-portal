@@ -1,28 +1,26 @@
-import { Method, Element, Component, EventEmitter } from "@stencil/core";
-import { h, Prop, Watch, Event, State } from "@stencil/core";
-
-import { GetResponse, FullGetResponse } from "../../api";
-import { patch as updateSubscription } from "../../api/subscriptions";
-import { get as getCustomer } from "../../api";
-import { APIError } from "../../api/utils";
-
-import * as vaadin from "../../mixins/vaadin";
-import * as store from "../../mixins/store";
 import * as i18n from "../../mixins/i18n";
+import * as store from "../../mixins/store";
+import * as vaadin from "../../mixins/vaadin";
 
-import { Link } from "../Link";
-import { Summary } from "./partials/Summary";
-import { CartItem } from "./partials/CartItem";
-import { Transactions } from "./partials/Transactions";
+import { Component, Element, EventEmitter, Method } from "@stencil/core";
+import { Event, Prop, State, Watch, h } from "@stencil/core";
+import { FullGetResponse, GetResponse } from "../../api";
+
+import { APIError } from "../../api/utils";
 import { BillingDetails } from "./partials/BillingDetails";
-import { PaymentMethod } from "./partials/PaymentMethod";
-import { NextDatePicker } from "./partials/NextDatePicker";
-import { FrequencyPicker } from "./partials/FrequencyPicker";
-
-import { getParentPortal } from "../../assets/utils/getParentPortal";
+import { CartItem } from "./partials/CartItem";
 import { ErrorOverlay } from "../ErrorOverlay";
+import { FrequencyPicker } from "./partials/FrequencyPicker";
+import { Link } from "../Link";
+import { NextDatePicker } from "./partials/NextDatePicker";
+import { PaymentMethod } from "./partials/PaymentMethod";
+import { Summary } from "./partials/Summary";
+import { Transactions } from "./partials/Transactions";
 import { getCancelUrl } from "./utils";
+import { get as getCustomer } from "../../api";
+import { getParentPortal } from "../../assets/utils/getParentPortal";
 import { i18nProvider } from "./i18n";
+import { patch as updateSubscription } from "../../api/subscriptions";
 
 type StoreMixin = store.Mixin<
   GetResponse<{
@@ -275,6 +273,8 @@ export class Subscription implements Mixins {
   }
 
   render() {
+    const subModLink = this._subscription?._links["fx:sub_modification_url"];
+
     return (
       <details
         class="relative bg-base font-lumo overflow-hidden leading-s"
@@ -333,13 +333,32 @@ export class Subscription implements Mixins {
                 />
               </div>
 
-              {this._template._embedded["fx:items"].map(item => (
-                <CartItem
-                  i18n={this.i18n}
-                  template={this._template}
-                  item={item}
-                />
-              ))}
+              <section>
+                <div class="flex items-center justify-between px-m mb-xs">
+                  <h1 class="text-s text-secondary">
+                    {this.i18n.items(
+                      this._template._embedded["fx:items"].length
+                    )}
+                  </h1>
+
+                  {subModLink && this._subscription?.is_active && (
+                    <Link
+                      size="s"
+                      href={subModLink.href}
+                      text={this.i18n.editItems}
+                      color="primary"
+                    />
+                  )}
+                </div>
+
+                {this._template._embedded["fx:items"].map(item => (
+                  <CartItem
+                    i18n={this.i18n}
+                    template={this._template}
+                    item={item}
+                  />
+                ))}
+              </section>
 
               <div class="px-m">
                 {this._isNextDateEditable && (

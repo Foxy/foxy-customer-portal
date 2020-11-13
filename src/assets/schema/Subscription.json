@@ -22,6 +22,9 @@
               "properties": {
                 "fx:sub_token_url": {
                   "$ref": "./Link.json"
+                },
+                "fx:sub_modification_url": {
+                  "$ref": "./Link.json"
                 }
               }
             }
