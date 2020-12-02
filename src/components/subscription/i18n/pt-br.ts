@@ -10,6 +10,7 @@ export const messages: Messages = {
   jcb: "Logo da JCB.",
   maestro: "Logo da Maestro.",
   mastercard: "Logo da MasterCard.",
+  unionpay: "Logo da UnionPay.",
   visa: "Logo da Visa.",
   unknown: "Imagem de um cartão genérico.",
   ccNumber: "Últimos 4 dígitos do número do cartão:",

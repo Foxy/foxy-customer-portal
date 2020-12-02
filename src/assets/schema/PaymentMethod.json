@@ -16,7 +16,7 @@
         "cc_type": {
           "description": "The credit card or debit card type. This will be determined automatically once the payment card is saved.",
           "type": "string",
-          "examples": ["Visa", "MasterCard", "Maestro", "Discovery", "JCB"]
+          "examples": ["Visa", "MasterCard", "Maestro", "Discovery", "JCB", "UnionPay"]
         },
         "cc_number_masked": {
           "description": "A masked version of this payment card showing only the last 4 digits.",
