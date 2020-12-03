@@ -29,6 +29,9 @@ export interface Messages {
   /** MasterCard logo image alt text. */
   mastercard: string;
 
+  /** UnionPay logo image alt text. */
+  unionpay: string;
+
   /** Visa logo image alt text. */
   visa: string;
 

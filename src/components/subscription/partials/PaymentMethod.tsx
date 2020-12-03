@@ -12,6 +12,7 @@ export type System =
   | "jcb"
   | "maestro"
   | "mastercard"
+  | "unionpay"
   | "visa";
 
 interface Props {
@@ -28,6 +29,7 @@ const cover: Record<System, string> = {
   jcb: "bg-jcb",
   maestro: "bg-maestro",
   mastercard: "bg-mastercard",
+  unionpay: "bg-unionpay",
   visa: "bg-visa"
 };
 

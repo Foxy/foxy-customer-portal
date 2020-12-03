@@ -16,6 +16,7 @@ export const messages: Messages = {
   jcb: "Logo JCB.",
   maestro: "Logo Maestro.",
   mastercard: "Logo MasterCard.",
+  unionpay: "Logo UnionPay",
   visa: "Logo Visa.",
   unknown: "Delwedd card generig.",
   ccNumber: "Y 4 digid olaf o'ch rhif cardyn:",

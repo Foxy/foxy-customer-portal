@@ -111,6 +111,15 @@ details > summary::-webkit-details-marker {
     );
 }
 
+.bg-unionpay {
+  background: #0dadb5
+    repeating-radial-gradient(
+      circle at -100% 500%,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.05) 4px
+    );
+}
+
 .bg-visa {
   background: #0e4595
     repeating-radial-gradient(
