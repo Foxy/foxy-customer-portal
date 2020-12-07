@@ -295,8 +295,8 @@ export class CustomerPortal
                   {this.router && Boolean(tab.href) ? (
                     <a
                       tabIndex={-1}
-                      target={!tab.isPortalLink && "_blank"}
-                      href={this.router && tab.href}
+                      target={tab.isPortalLink ? undefined : "_blank"}
+                      href={tab.href}
                       rel="nofollow noopener noreferrer"
                     >
                       {tab.text}
