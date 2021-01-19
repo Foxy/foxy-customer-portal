@@ -1,5 +1,5 @@
-import { Link } from "../assets/types/Link";
 import { GetResponse } from ".";
+import { Link } from "../assets/types/Link";
 
 export type Fields<T> = Omit<T, "_links" | "_embedded">;
 
@@ -92,7 +92,13 @@ export type JSONError = {
   code: string;
 
   /** Human-readable error message in English. */
-  message: string;
+  message:
+    | string
+    | {
+        message: string;
+        param: string;
+        value: string;
+      };
 };
 
 export class APIError extends Error implements JSONError {
@@ -100,7 +106,11 @@ export class APIError extends Error implements JSONError {
   code: string;
 
   constructor(response: JSONError) {
-    super(response.message);
+    super(
+      typeof response.message === "string"
+        ? response.message
+        : response.message.message
+    );
 
     this.type = response.type;
     this.code = response.code;
