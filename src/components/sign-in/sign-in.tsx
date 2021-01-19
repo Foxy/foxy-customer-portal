@@ -1,3 +1,5 @@
+import { TextFieldElement } from "@vaadin/vaadin-text-field";
+
 import {
   Component,
   Element,
@@ -26,8 +28,8 @@ import { Skeleton } from "../Skeleton";
 })
 export class SignIn implements vaadin.Mixin, i18n.Mixin<typeof i18nProvider> {
   private formElement: HTMLFormElement;
-  private emailElement: HTMLInputElement;
-  private passwordElement: HTMLInputElement;
+  private emailElement: TextFieldElement;
+  private passwordElement: TextFieldElement;
 
   @State() i18nProvider = i18nProvider;
   @State() i18n: Messages | null = null;
@@ -126,7 +128,7 @@ export class SignIn implements vaadin.Mixin, i18n.Mixin<typeof i18nProvider> {
   }
 
   private requestSubmit(e?: Event) {
-    if (this.formElement.reportValidity()) {
+    if (!this.emailElement.invalid && !this.passwordElement.invalid) {
       this.handleSubmit(e);
     }
   }
