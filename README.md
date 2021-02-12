@@ -130,8 +130,13 @@ If you aren't doing subscriptions or downloadables, you can override those eleme
   <div slot="downloadables-container"></div>
 </foxy-customer-portal>
 ```
+To use a language that's already defined, you can include the `locale` attribute on the `foxy-customer-portal` element. For example:
 
-Overriding language strings is easy, but **note that this approach will change when this portal comes out of beta** (at which point the language strings will be configurable from the Foxy admin, like all other language strings):
+```html
+<foxy-customer-portal endpoint="https://your-api-endpoint.tld" locale="fr"></foxy-customer-portal>
+```
+
+Overriding individual language strings is easy, but **note that this approach will change when this portal comes out of beta** (at which point the language strings will be configurable from the Foxy admin, like all other language strings):
 
 ```html
 <script>
