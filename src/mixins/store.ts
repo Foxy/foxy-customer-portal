@@ -1,4 +1,5 @@
 import deepmerge from "deepmerge";
+import isEqual from "fast-deep-equal";
 import { EventEmitter } from "@stencil/core";
 import { check as isSignedIn } from "../api/authenticate";
 import { getParentPortal } from "../assets/utils/getParentPortal";
@@ -32,12 +33,8 @@ export async function getState<TGetResponse>(
   forceReload = false
 ) {
   if (forceReload && isSignedIn()) {
-    const state = await this.getRemoteState();
-
-    if (state !== null) {
-      await this.setState(state);
-      this.update.emit(this.state);
-    }
+    const remoteState = await this.getRemoteState();
+    if (remoteState !== null) await this.setState(remoteState);
   }
 
   return this.state;
@@ -47,9 +44,13 @@ export async function setState<TGetResponse>(
   this: Mixin<TGetResponse>,
   value: Partial<TGetResponse>
 ) {
-  this.state = deepmerge(this.state, value, {
-    arrayMerge: (_, source) => source
-  });
+  const arrayMerge = (_: never, source: unknown[]) => source;
+  const newState = deepmerge(this.state, value, { arrayMerge });
+
+  if (isEqual(newState, this.state)) return;
+
+  this.state = newState;
+  this.update.emit(newState);
 
   const selector = [
     "foxy-address",

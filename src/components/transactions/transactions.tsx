@@ -1,3 +1,5 @@
+import deepmerge from "deepmerge";
+
 import {
   EventEmitter,
   Component,
@@ -167,6 +169,7 @@ export class Transactions
 
     if (direction === "forward" && newOffset > total) {
       this.isLoadingNext = true;
+      const newState = deepmerge({}, this.state) as any;
 
       try {
         const endpoint = `${this.resolvedEndpoint}/transactions`;
@@ -176,7 +179,7 @@ export class Transactions
           zoom: { items: true }
         });
 
-        this.state._embedded["fx:transactions"].push(
+        newState._embedded["fx:transactions"].push(
           ...res._embedded["fx:transactions"]
         );
 
@@ -192,8 +195,7 @@ export class Transactions
         this.isErrorDismissable = true;
       }
 
-      await this.setState(this.state);
-      this.update.emit(this.state);
+      await this.setState(newState);
     } else {
       this.start += (direction === "back" ? -1 : 1) * this.limit;
     }

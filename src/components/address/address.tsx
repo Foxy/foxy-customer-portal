@@ -201,7 +201,6 @@ export class Address
       })
     );
 
-    this.update.emit(this.state);
     this.isSaving = false;
     this.isEditable = false;
   }

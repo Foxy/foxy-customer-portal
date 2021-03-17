@@ -51,7 +51,7 @@ export namespace Components {
         /**
           * Resolves with a customer object (the state).
          */
-        "getRemoteState": () => Promise<import("/Users/dantothefuture/Foxy/foxy-customer-portal/src/api/index").GetResponse<{ zoom: { default_billing_address: true; default_shipping_address: true; default_payment_method: true; subscriptions: { transactions: true; }; transactions: { items: true; }; }; sso: true; }>>;
+        "getRemoteState": () => Promise<import("/Users/pheekus/FoxyCart/foxy-customer-portal/src/api/index").GetResponse<{ zoom: { default_billing_address: true; default_shipping_address: true; default_payment_method: true; subscriptions: { transactions: true; }; transactions: { items: true; }; }; sso: true; }>>;
         /**
           * Resolves with a customer object (the state).
          */
