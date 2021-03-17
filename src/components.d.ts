@@ -141,6 +141,10 @@ export namespace Components {
          */
         "locale": any;
         /**
+          * True if expanded, false otherwise. Set to toggle.
+         */
+        "open": boolean;
+        /**
           * Sets frequency.
          */
         "setFrequency": (newValue: string) => Promise<void>;
@@ -387,9 +391,17 @@ declare namespace LocalJSX {
          */
         "onReady"?: (event: CustomEvent<void>) => void;
         /**
+          * Emitted when subscription details are expanded or collapsed.
+         */
+        "onToggle"?: (event: CustomEvent<FullGetResponse>) => void;
+        /**
           * Emitted after the component makes changes to the state, containing the changed data in its payload.
          */
         "onUpdate"?: (event: CustomEvent<FullGetResponse>) => void;
+        /**
+          * True if expanded, false otherwise. Set to toggle.
+         */
+        "open"?: boolean;
         /**
           * List of additional slots to generate for each transaction in the transactions display. Each entry will create a table cell slot named `transaction-${id}-${entry}` and a corresponding table header slot named `transactions-${entry}`. Accepts array of strings (`["foo", "bar"]`) or a serialized list of values separated by a comma (`"foo,bar"`). Items order is respected.
          */

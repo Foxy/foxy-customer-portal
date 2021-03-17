@@ -1,8 +1,8 @@
-import { click } from "../../assets/utils/click";
-import { usePage } from "../../assets/utils/usePage";
-import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
 import { E2EElement } from "@stencil/core/testing";
 import { Subscription } from "../../assets/types/Subscription";
+import { click } from "../../assets/utils/click";
+import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
+import { usePage } from "../../assets/utils/usePage";
 
 const tag = "foxy-subscriptions";
 
@@ -54,6 +54,32 @@ describe("HTMLFoxySubscriptionsElement", () => {
         for (let i = 0; i < elements.length; ++i) {
           await shouldDisplay(elements[i], parent, db.subscriptions[i]);
         }
+      });
+    });
+
+    it("automatically expands the first and the only subscription", async () => {
+      await interceptAPIRequests(async ({ db, url, page, signIn }) => {
+        db.subscriptions = [db.subscriptions[0]];
+
+        await signIn();
+        await page.setContent(`<${tag} endpoint="${url}"></${tag}>`);
+        await page.waitForChanges();
+
+        const element = await page.find(`${tag} >>> foxy-subscription`);
+        expect(element).toHaveAttribute("open");
+      });
+    });
+
+    it("collapses all subscriptions by default if there is more than one", async () => {
+      await interceptAPIRequests(async ({ url, page, signIn }) => {
+        await signIn();
+        await page.setContent(`<${tag} endpoint="${url}"></${tag}>`);
+        await page.waitForChanges();
+
+        const elements = await page.findAll(`${tag} >>> foxy-subscription`);
+        elements.forEach(element => {
+          expect(element).not.toHaveAttribute("open");
+        });
       });
     });
 

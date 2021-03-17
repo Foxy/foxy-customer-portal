@@ -11,6 +11,66 @@ const tag = "foxy-subscription";
 const SUB_MODIFY_URL = "https://store.foxy.test/modify";
 
 describe("HTMLFoxySubscriptionElement", () => {
+  it("is collapsed by default", async () => {
+    await usePage(async ({ page }) => {
+      await page.setContent(`<${tag}></${tag}>`);
+      await page.waitForEvent("ready");
+      await page.waitForChanges();
+
+      const details = await page.find(`${tag} >>> details`);
+      const element = await page.find(tag);
+
+      expect(details).not.toHaveAttribute("open");
+      expect(element).not.toHaveAttribute("open");
+    });
+  });
+
+  it("can be toggled via API", async () => {
+    await usePage(async ({ page }) => {
+      await page.setContent(`<${tag}></${tag}>`);
+      await page.waitForEvent("ready");
+      await page.waitForChanges();
+
+      const details = await page.find(`${tag} >>> details`);
+      const element = await page.find(tag);
+
+      element.setAttribute("open", "open");
+      await page.waitForChanges();
+
+      expect(details).toHaveAttribute("open");
+      expect(element).toHaveAttribute("open");
+
+      element.removeAttribute("open");
+      await page.waitForChanges();
+
+      expect(details).not.toHaveAttribute("open");
+      expect(element).not.toHaveAttribute("open");
+    });
+  });
+
+  it("can be expanded via UI", async () => {
+    await usePage(async ({ page }) => {
+      await page.setContent(`<${tag}></${tag}>`);
+      await page.waitForEvent("ready");
+      await page.waitForChanges();
+
+      const details = await page.find(`${tag} >>> details`);
+      const element = await page.find(tag);
+
+      details.click();
+      await page.waitForChanges();
+
+      expect(details).toHaveAttribute("open");
+      expect(element).toHaveAttribute("open");
+
+      details.click();
+      await page.waitForChanges();
+
+      expect(details).not.toHaveAttribute("open");
+      expect(element).not.toHaveAttribute("open");
+    });
+  });
+
   const templates = [
     `<${tag}></${tag}>`,
     `<${tag} link="https://i.dont.exist.local"></${tag}>`,

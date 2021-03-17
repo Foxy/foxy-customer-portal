@@ -63,7 +63,9 @@ export class Subscription implements Mixins {
   @State() isErrorDismissable = false;
 
   @State() busy = false;
-  @State() open = false;
+
+  /** True if expanded, false otherwise. Set to toggle. */
+  @Prop({ reflect: true }) open = false;
 
   /** Subscription URL (value of `(fx:subscription)._links.self.href`). */
   @Prop() link = "";
@@ -88,6 +90,10 @@ export class Subscription implements Mixins {
   onLocaleChange(newValue: string) {
     i18n.onLocaleChange.call(this, newValue);
   }
+
+  /** Emitted when subscription details are expanded or collapsed. */
+  @Event({ eventName: "toggle" })
+  readonly toggle: EventEmitter<FullGetResponse>;
 
   /**
    * Emitted after the component makes changes to the
@@ -287,8 +293,9 @@ export class Subscription implements Mixins {
 
     return (
       <details
+        open={this.open}
         class="relative bg-base font-lumo overflow-hidden leading-s"
-        onToggle={() => (this.open = !this.open)}
+        onToggle={evt => (this.open = (evt.target as HTMLDetailsElement).open)}
       >
         {this.error && (
           <ErrorOverlay
