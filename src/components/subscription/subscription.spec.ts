@@ -1,9 +1,10 @@
-import { testLifecycle } from "../../assets/utils/testLifecycle";
-import { testStore } from "../../assets/utils/testStore";
-import { testI18N } from "../../assets/utils/testI18N";
-import { newSpecPage, SpecPage } from "@stencil/core/testing";
+import { SpecPage, newSpecPage } from "@stencil/core/testing";
+
 import { Subscription } from "./subscription";
 import { mockFetch } from "../../assets/utils/mockFetch";
+import { testI18N } from "../../assets/utils/testI18N";
+import { testLifecycle } from "../../assets/utils/testLifecycle";
+import { testStore } from "../../assets/utils/testStore";
 
 const tag = "foxy-subscription";
 
@@ -11,6 +12,23 @@ describe("HTMLFoxySubscriptionElement", () => {
   testLifecycle("foxy-subscription");
   testStore("foxy-subscription");
   testI18N("foxy-subscription");
+
+  describe("Public properties", () => {
+    let page: SpecPage;
+
+    beforeEach(async () => {
+      page = await newSpecPage({
+        components: [Subscription],
+        html: `<${tag}></${tag}>`
+      });
+    });
+
+    it("has writable property `open` defaulting to `false`", () => {
+      expect(page.rootInstance).toHaveProperty("open", false);
+      page.rootInstance.open = true;
+      expect(page.rootInstance).toHaveProperty("open", true);
+    });
+  });
 
   describe("Public methods", () => {
     let page: SpecPage;
