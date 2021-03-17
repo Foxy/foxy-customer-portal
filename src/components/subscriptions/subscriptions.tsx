@@ -1,18 +1,16 @@
-import { Component, Element, Prop, State, Method } from "@stencil/core";
-import { Event, Watch, EventEmitter, h } from "@stencil/core";
-
-import { FullGetResponse, GetResponse } from "../../api";
-import { get as getSubscriptions } from "../../api/subscriptions";
-import { get as getCustomer } from "../../api";
-
-import * as vaadin from "../../mixins/vaadin";
-import * as store from "../../mixins/store";
 import * as i18n from "../../mixins/i18n";
+import * as store from "../../mixins/store";
+import * as vaadin from "../../mixins/vaadin";
 
-import { getParentPortal } from "../../assets/utils/getParentPortal";
-import { Subscription } from "../../assets/types/Subscription";
+import { Component, Element, Method, Prop, State } from "@stencil/core";
+import { Event, EventEmitter, Watch, h } from "@stencil/core";
+import { FullGetResponse, GetResponse } from "../../api";
+
 import { APIError } from "../../api/utils";
 import { ErrorOverlay } from "../ErrorOverlay";
+import { get as getCustomer } from "../../api";
+import { getParentPortal } from "../../assets/utils/getParentPortal";
+import { get as getSubscriptions } from "../../api/subscriptions";
 import { i18nProvider } from "./i18n";
 
 type StoreMixin = store.Mixin<
@@ -43,7 +41,7 @@ export class Subscriptions
   @State() hasMore = true;
   @State() isLoadingNext = false;
 
-  @State() activeItem: Subscription | null = null;
+  @State() openItems = [];
 
   @State() confirmText = "";
   @State() toastTheme = "error" as "success" | "error";
@@ -132,13 +130,17 @@ export class Subscriptions
   async setState(value: Partial<FullGetResponse>) {
     store.setState.call(this, value);
 
-    this.activeItem = null;
+    const itemsLength = this.state._embedded["fx:subscriptions"].length;
+    const newOpenItems = this.openItems.filter(index => index < itemsLength);
+
+    if (itemsLength === 1 && !this.openItems.includes(0)) newOpenItems.push(0);
+    this.openItems = newOpenItems;
 
     if (this.error.length > 0 && this.state.id !== -1) {
       this.isErrorDismissable = true;
     }
 
-    if (this.state._embedded["fx:subscriptions"].length < this.limit) {
+    if (itemsLength < this.limit) {
       this.hasMore = false;
       this.start = 0;
     } else {
@@ -222,6 +224,13 @@ export class Subscriptions
                 endpoint={this.endpoint}
                 locale={this.locale}
                 link={value._links.self.href}
+                open={this.openItems.includes(index)}
+                onToggle={({ target }) => {
+                  const isOpen = (target as HTMLFoxySubscriptionElement).open;
+                  const newOpenItems = this.openItems.filter(v => v !== index);
+                  if (isOpen) newOpenItems.push(index);
+                  this.openItems = newOpenItems;
+                }}
               />
             </slot>
           </div>
