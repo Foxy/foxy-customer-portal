@@ -225,10 +225,7 @@ export class CustomerPortal
   private async signOut() {
     resetAuthCookie();
     this.isSignedIn = false;
-
     await this.setState(store.defaults.state.call(this));
-
-    this.update.emit(this.state);
     this.signout.emit();
   }
 

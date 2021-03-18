@@ -1,3 +1,5 @@
+import deepmerge from "deepmerge";
+
 import * as i18n from "../../mixins/i18n";
 import * as store from "../../mixins/store";
 import * as vaadin from "../../mixins/vaadin";
@@ -160,6 +162,7 @@ export class Subscriptions
 
     if (direction === "forward" && newOffset > total) {
       this.isLoadingNext = true;
+      const newState = deepmerge({}, this.state);
 
       try {
         const endpoint = `${this.resolvedEndpoint}/subscriptions`;
@@ -168,7 +171,7 @@ export class Subscriptions
           limit: this.limit - (total % this.limit)
         });
 
-        this.state._embedded["fx:subscriptions"].push(
+        newState._embedded["fx:subscriptions"].push(
           ...res._embedded["fx:subscriptions"]
         );
 
@@ -183,8 +186,7 @@ export class Subscriptions
         this.isErrorDismissable = true;
       }
 
-      await this.setState(this.state);
-      this.update.emit(this.state);
+      await this.setState(newState);
     } else {
       this.start += (direction === "back" ? -1 : 1) * this.limit;
     }

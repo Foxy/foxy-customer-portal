@@ -165,13 +165,10 @@ export class Profile
       this.isErrorDismissable = true;
     }
 
-    const newState = {
+    await this.setState({
       ...this.state,
       email: this.fields.email.value
-    };
-
-    await this.setState(newState);
-    this.update.emit(this.state);
+    });
 
     this.fields.password.value = "";
     this.fields.password_old.value = "";

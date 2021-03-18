@@ -1,3 +1,5 @@
+import deepmerge from "deepmerge";
+
 import * as i18n from "../../mixins/i18n";
 import * as store from "../../mixins/store";
 import * as vaadin from "../../mixins/vaadin";
@@ -177,21 +179,24 @@ export class Subscription implements Mixins {
     const oldValue = this._subscription.next_transaction_date;
 
     if (normalizedNewValue !== oldValue) {
-      this._subscription.next_transaction_date = normalizedNewValue;
-      this.busy = true;
-
       try {
+        this.busy = true;
+
         await updateSubscription(this._subscription._links.self.href, {
           next_transaction_date: normalizedNewValue
         });
 
-        await this.setState({ ...this.state });
-        this.update.emit(this.state);
+        const newState = deepmerge({}, this.state);
+        const newSubscription = newState._embedded["fx:subscriptions"].find(
+          v => v._links.self.href === this._subscription._links.self.href
+        );
+
+        newSubscription.next_transaction_date = normalizedNewValue;
+        await this.setState(newState);
+
         this._nextDateSuccessAlert?.open();
       } catch (e) {
         console.error(e);
-
-        this._subscription.next_transaction_date = oldValue;
         this._nextDateErrorAlert?.open();
       } finally {
         this.busy = false;
@@ -207,16 +212,21 @@ export class Subscription implements Mixins {
     const oldValue = this._subscription.frequency;
 
     if (newValue !== oldValue) {
-      this._subscription.frequency = newValue;
-      this.busy = true;
-
       try {
+        this.busy = true;
+
         await updateSubscription(this._subscription._links.self.href, {
           frequency: newValue
         });
 
-        await this.setState({ ...this.state });
-        this.update.emit(this.state);
+        const newState = deepmerge({}, this.state);
+        const newSubscription = newState._embedded["fx:subscriptions"].find(
+          v => v._links.self.href === this._subscription._links.self.href
+        );
+
+        newSubscription.frequency = newValue;
+        await this.setState(newState);
+
         this._frequencySuccessAlert?.open();
       } catch (e) {
         console.error(e);
