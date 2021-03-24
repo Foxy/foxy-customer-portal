@@ -130,29 +130,92 @@ If you aren't doing subscriptions or downloadables, you can override those eleme
   <div slot="downloadables-container"></div>
 </foxy-customer-portal>
 ```
+To use a language that's already defined, you can include the `locale` attribute on the `foxy-customer-portal` element. For example:
 
-Overriding language strings is easy, but **note that this approach will change when this portal comes out of beta** (at which point the language strings will be configurable from the Foxy admin, like all other language strings):
+```html
+<foxy-customer-portal endpoint="https://your-api-endpoint.tld" locale="fr"></foxy-customer-portal>
+```
+
+Overriding individual language strings is easy, but **note that this approach will change when this portal comes out of beta** (at which point the language strings will be configurable from the Foxy admin, like all other language strings):
 
 ```html
 <script>
   // For the parent component
-  document.querySelector('foxy-customer-portal').locale = {
-    "en": {
-      "receipt": "Purchase Order",
-      "receiptLink": "Purchase Order"
-    }
-  };
-  // For child components
-  const foxyPortal = document.querySelector("foxy-customer-portal");
-  foxyPortal.shadowRoot.querySelectorAll('foxy-address').forEach(e => {
-    e.locale = {
-      "en": {
-        "postal_code": "ZIP Code",
-        "save": () => "Save Changes" // Note that some language strings must be functions
-      }
-    }
-  })
+  customElements.whenDefined('foxy-customer-portal').then(() => {
+      document.querySelector('foxy-customer-portal').locale = {
+        "en": {
+          greeting: name => `Willkommen, ${name}!`,
+          activity: "Aktivität",
+          account: "Konto",
+          logout: "Logout",
+          transactions: "Bestellungen",
+        }
+      };
+    });
+  </script>
+  ```
+For child components, you'll need to move them out of the shadow dom in your page. Include the following (to change sign-in language) within the `<foxy-customer-portal>` element:
 
+```html
+<foxy-sign-in slot="sign-in"></foxy-sign-in>
+```
+
+and include the script for the component:
+
+```html
+<script>
+  customElements.whenDefined('foxy-sign-in').then(() => {
+    document.querySelectorAll('foxy-sign-in').forEach(element => {
+      element.locale = {
+        "en": {
+          password: "Passwort",
+          resetPassword: "Neues Passwort",
+        }
+      };
+    });
+  });
+</script>
+```
+Changing the address fields is a little different. Here's what you'll need to add to the html, within the `<foxy-customer-portal>` element:
+```html
+<foxy-address id="billing-address" type="default_billing_address" slot="billing-address"></foxy-address> 
+<foxy-address id="shipping-address" type="default_shipping_address" slot="shipping-address"></foxy-address>
+```
+and then add the script:
+
+```html
+<script>
+  customElements.whenDefined("foxy-address").then(() => {
+    // billing address
+    document.getElementById("billing-address").locale = {
+      "en": {
+        title: type => type === "default_shipping_address" ? "Versand" : "Rechnung", 
+        label: key => ({
+          first_name: "Vorname",
+          last_name: "Nachname",
+        }[key]), 
+        save: type =>
+          `${
+            type === "default_shipping_address" ? "Versandadresse" : "Rechnungsadresse"
+          } speichern`,
+        phone: "Telefon",
+        close: "Close"
+      }
+    };
+ 
+   // shipping address
+   document.getElementById("shipping-address").locale = {
+      "en": {
+      title: type => type === "default_shipping_address" ? "Versand" : "Rechnung",
+      label: key => ({
+          first_name: "Vorname",
+          last_name: "Nachname",
+        }[key]),
+        phone: "Telefon",
+        close: "Close"
+      }
+    };
+  });
 </script>
 ```
 
