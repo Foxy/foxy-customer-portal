@@ -286,21 +286,19 @@ export class CustomerPortal
             <vaadin-tabs selected={this.tabIndex} data-theme="minimal centered">
               {this.extendedTabs.map((tab, index) => (
                 <vaadin-tab
+                  class="p-0"
                   data-e2e={`lnk-${tab.path}`}
                   onClick={() => !this.router && (this.tabIndex = index)}
                 >
-                  {this.router && Boolean(tab.href) ? (
-                    <a
-                      tabIndex={-1}
-                      target={tab.isPortalLink ? undefined : "_blank"}
-                      href={tab.href}
-                      rel="nofollow noopener noreferrer"
-                    >
-                      {tab.text}
-                    </a>
-                  ) : (
-                    tab.text
-                  )}
+                  <a
+                    tabIndex={-1}
+                    target={tab.isPortalLink ? "_self" : "_blank"}
+                    class="m-0"
+                    href={this.router ? tab.href : undefined}
+                    rel="nofollow noopener noreferrer"
+                  >
+                    {tab.text}
+                  </a>
                 </vaadin-tab>
               ))}
 
