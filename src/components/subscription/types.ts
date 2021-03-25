@@ -1,12 +1,9 @@
-import { Subscription } from "../../assets/types/Subscription";
 import { Item } from "../../assets/types/Item";
+import { Subscription } from "../../assets/types/Subscription";
 
 type NonBool<T> = T extends boolean ? never : T;
 type NextDateConfig = Subscription["_embedded"]["template_config"]["allow_next_date_modification"];
-type NextDateRules = Pick<
-  NonBool<NextDateConfig>,
-  "allowedDays" | "disallowedDates"
->;
+type NextDateRules = NonBool<NextDateConfig>;
 
 export interface Messages {
   /** Generic action approval button text. */

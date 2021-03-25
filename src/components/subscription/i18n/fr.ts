@@ -1,8 +1,8 @@
-import { Messages } from "../types";
-import groupNumbers from "group-numbers";
-import { toLocaleList, parseDate } from "../utils";
+import { getRanges, parseDate, toLocaleList } from "../utils";
 
-const ordinal = (v: number) => `${v}${v === 1 ? "er" : "ème"}`;
+import { Messages } from "../types";
+
+const ordinal = (v: number) => `${v}${v === 1 ? "er" : "e"}`;
 
 const weekdays = {
   1: "lundi",
@@ -117,37 +117,37 @@ export const messages: Messages = {
   },
 
   nextDateDescription: rules => {
-    let result = "";
+    const result: string[] = [];
 
-    // days of week:  "Vous pouvez choisir le lundi - mercredi et vendredi."
-    // days of month: "Vous pouvez choisir le 1er, 3ème - 14ème et 28ème jours du mois."
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(r => r.map(d => weekdays[d]).join("—"));
 
-    if ("allowedDays" in rules) {
-      result += "Vous pouvez choisir le ";
-
-      const groups = groupNumbers(rules.allowedDays.days, false);
-
-      if (rules.allowedDays.type === "day") {
-        const days = groups.map(v => v.map(day => weekdays[day]).join(" – "));
-        result += `${toLocaleList(days, "et")}.`;
-      } else {
-        const dates = groups.map(v => v.map(ordinal).join(" – "));
-        result += `${toLocaleList(dates)}.`;
-      }
+      // Example: "Vous pouvez choisir lundis—mercredis et vendredis."
+      result.push(`Vous pouvez choisir ${toLocaleList(list)}.`);
     }
 
-    // example: "La date ne peut pas être le 3 juin, le 13 juin ou le 6 août - 1er septembre."
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(r => r.map(ordinal).join("—"));
+      const tDates = toLocaleList(dates);
+      const tDay = dates.length === 1 ? "jour" : "jours";
 
-    if ("disallowedDates" in rules) {
-      const dates = rules.disallowedDates.map(v => {
+      // Example: "Seuls les 1er, 3e - 14e et 28e jours du mois sont autorisés."
+      result.push(`Seuls les ${tDates} ${tDay} du mois sont autorisés.`);
+    }
+
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
         const range = v.split("..");
-        return range.map(v => `le ${messages.date(parseDate(v))}`).join(" – ");
+        return range.map(v => messages.date(parseDate(v))).join("—");
       });
 
-      result += ` La date ne peut pas être ${toLocaleList(dates, "ou")}.`;
+      // Example: "Toute date sauf le 3 juin, le 13 juin et le 6 août—le 1er septembre."
+      result.push(`Toute date sauf ${toLocaleList(list, "et")}.`);
     }
 
-    return result;
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

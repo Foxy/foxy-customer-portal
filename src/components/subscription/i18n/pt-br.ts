@@ -1,4 +1,16 @@
+import { getRanges, parseDate, toLocaleList } from "../utils";
+
 import { Messages } from "../types";
+
+const weekdays = {
+  1: "segunda",
+  2: "terça",
+  3: "quarta",
+  4: "quinta",
+  5: "sexta",
+  6: "sábado",
+  7: "domingo"
+};
 
 export const messages: Messages = {
   ok: "OK",
@@ -100,6 +112,39 @@ export const messages: Messages = {
       w: (n: number) => (n > 1 ? `${n} semanas` : "semana"),
       d: (n: number) => (n > 1 ? `${n} dias` : "dia")
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    const result: string[] = [];
+
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(r => r.map(d => weekdays[d]).join("—"));
+
+      // Example: "Dias disponíveis: segunda—quarta e sexta."
+      result.push(`Dias disponíveis: ${toLocaleList(list, "e")}.`);
+    }
+
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(r => r.join("—"));
+      const tDates = toLocaleList(dates, "e");
+
+      // Example: "Dias disponíveis do mês: 1, 3—14 e 28."
+      result.push(`Dias disponíveis do mês: ${tDates}.`);
+    }
+
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
+        const range = v.split("..");
+        return range.map(v => messages.date(parseDate(v))).join("—");
+      });
+
+      // Example: "Não selecionável 3 de junho, 13 de junho e 6 de agosto—1 de setembro."
+      result.push(`Não selecionável ${toLocaleList(list, "e")}.`);
+    }
+
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

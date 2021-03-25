@@ -1,6 +1,6 @@
-import groupNumbers from "group-numbers";
+import { getRanges, parseDate, toLocaleList } from "../utils";
+
 import { Messages } from "../types";
-import { toLocaleList, parseDate } from "../utils";
 
 /**
  * Pluralizes the given word. Pure magic aka Russian grammar.
@@ -132,36 +132,36 @@ export const messages: Messages = {
   },
 
   nextDateDescription: rules => {
-    let result = "";
+    const result: string[] = [];
 
-    // days of week:  "Доступные дни недели: понедельник – среда и четверг."
-    // days of month: "Доступные числа месяца: 1, 3 - 14 и 28."
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(r => r.map(d => weekdays[d]).join("—"));
 
-    if ("allowedDays" in rules) {
-      const groups = groupNumbers(rules.allowedDays.days, false);
-
-      if (rules.allowedDays.type === "day") {
-        const days = groups.map(v => v.map(day => weekdays[day]).join(" – "));
-        result += `Доступные дни недели: ${toLocaleList(days, "и")}.`;
-      } else {
-        const dates = groups.map(v => v.join(" – "));
-        result += `Доступные числа месяца: ${toLocaleList(dates, "и")}.`;
-      }
+      // Example: "Доступные дни: понедельник—среда и пятница."
+      result.push(`Доступные дни: ${toLocaleList(list, "и")}.`);
     }
 
-    // example: "Можно выбрать любой день, кроме 3 июня, 13 июня и 6 августа – 1 сентября."
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(r => r.join(" по "));
+      const tDates = toLocaleList(dates, "и");
 
-    if ("disallowedDates" in rules) {
-      const dates = rules.disallowedDates.map(v => {
+      // Example: "Доступные числа: 1, 3 по 14 и 28."
+      result.push(`Доступные числа: ${tDates}.`);
+    }
+
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
         const range = v.split("..");
-        return range.map(v => messages.date(parseDate(v))).join(" – ");
+        return range.map(v => messages.date(parseDate(v))).join("—");
       });
 
-      if (result.length !== 0) result += " ";
-      result += `Можно выбрать любой день, кроме ${toLocaleList(dates, "и")}.`;
+      // Example: "Нельзя выбрать 3 июня, 13 июня и 6 августа—1 сентября."
+      result.push(`Нельзя выбрать ${toLocaleList(list, "и")}.`);
     }
 
-    return result;
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

@@ -1,9 +1,10 @@
 import { FunctionalComponent, h } from "@stencil/core";
-import { Subscription } from "../../../assets/types/Subscription";
-import { ConfirmDialog } from "../../ConfirmDialog";
-import { Notification } from "../../Notification";
 import { formatDate, parseDate } from "../utils";
+
+import { ConfirmDialog } from "../../ConfirmDialog";
 import { Messages } from "../types";
+import { Notification } from "../../Notification";
+import { Subscription } from "../../../assets/types/Subscription";
 
 type NextDateConfig = Subscription["_embedded"]["template_config"]["allow_next_date_modification"];
 
@@ -76,19 +77,17 @@ function validate(value: Date, config: NextDateConfig) {
     if (time > max.getTime()) return false;
   }
 
-  if (typeof config.allowedDays === "object") {
-    if (config.allowedDays.type === "day") {
-      const days = config.allowedDays.days.map(v => (v === 7 ? 0 : v));
-      if (!days.includes(date.getDay())) return false;
-    }
-
-    if (config.allowedDays.type === "month") {
-      if (!config.allowedDays.days.includes(date.getDate())) return false;
-    }
+  if (Boolean(config.allowed_days_of_week)) {
+    const days = config.allowed_days_of_week.map(v => (v === 7 ? 0 : v));
+    if (!days.includes(date.getDay())) return false;
   }
 
-  if (typeof config.disallowedDates === "object") {
-    return !config.disallowedDates.some(item => {
+  if (Boolean(config.allowed_days_of_month)) {
+    if (!config.allowed_days_of_month.includes(date.getDate())) return false;
+  }
+
+  if (typeof config.disallowed_dates === "object") {
+    return !config.disallowed_dates.some(item => {
       const [min, max] = item.split("..");
       return (
         (typeof max === "undefined" && formattedDate === min) ||
@@ -137,13 +136,15 @@ export const NextDatePicker: FunctionalComponent<Props> = (props: Props) => {
       />
 
       {typeof nextDateConfig === "object" &&
-        (typeof nextDateConfig.allowedDays === "object" ||
-          typeof nextDateConfig.disallowedDates === "object") && (
+        (typeof nextDateConfig.allowed_days_of_month === "object" ||
+          typeof nextDateConfig.allowed_days_of_week === "object" ||
+          typeof nextDateConfig.disallowed_dates === "object") && (
           <p
             class={{
               "leading-xs text-xs": true,
               "text-error": props.invalid,
-              "text-tertiary": !props.invalid
+              "text-tertiary": !props.invalid && !props.disabled,
+              "text-disabled": !props.invalid && props.disabled
             }}
           >
             {props.i18n.nextDateDescription(nextDateConfig)}

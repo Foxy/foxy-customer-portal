@@ -1,4 +1,5 @@
 import { Subscription } from "../../assets/types/Subscription";
+import groupNumbers from "group-numbers";
 
 export function toLocaleList(items: string[], lastSeparator = "and") {
   let result = "";
@@ -43,4 +44,10 @@ export function getUpdateUrl(subscription: Subscription) {
   subTokenUrlInstance.searchParams.set("sub_restart", "auto");
 
   return subTokenUrlInstance.toString();
+}
+
+export function getRanges(numbers: number[]): number[][] {
+  return groupNumbers(numbers, false)
+    .map(group => [group[0], group[group.length - 1]])
+    .map(group => group.filter((v, i, a) => a.indexOf(v) === i));
 }

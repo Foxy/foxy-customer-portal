@@ -67,50 +67,28 @@
                           "type": "string",
                           "examples": ["3m"]
                         },
-                        "allowedDays": {
-                          "oneOf": [
-                            {
-                              "additionalProperties": false,
-                              "required": ["type", "days"],
-                              "properties": {
-                                "type": {
-                                  "enum": ["day"]
-                                },
-                                "days": {
-                                  "additionalItems": false,
-                                  "uniqueItems": true,
-                                  "description": "Array with values from 1 through 7. ISO says Monday is the first day of the week, so 1 = Monday, 7 = Sunday.",
-                                  "items": {
-                                    "type": "integer",
-                                    "minimum": 1,
-                                    "maximum": 7
-                                  }
-                                }
-                              }
-                            },
-                            {
-                              "additionalProperties": false,
-                              "required": ["type", "days"],
-                              "properties": {
-                                "type": {
-                                  "enum": ["month"]
-                                },
-                                "days": {
-                                  "additionalItems": false,
-                                  "uniqueItems": true,
-                                  "description": "Array with values from 1 through 31, corresponding to days of the month.",
-                                  "items": {
-                                    "type": "integer",
-                                    "minimum": 1,
-                                    "maximum": 31
-                                  }
-                                }
-                              }
-                            }
-                          ]
+                        "allowed_days_of_week": {
+                          "additionalItems": false,
+                          "uniqueItems": true,
+                          "description": "Array with values from 1 through 7. ISO says Monday is the first day of the week, so 1 = Monday, 7 = Sunday.",
+                          "items": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 7
+                          }
                         },
-                        "disallowedDates": {
-                          "description": "A blacklist of specific dates (YYYY-MM-DD) and date ranges (using API filtering style like YYYY-MM-DD..YYYY-MM-DD) to disallow.",
+                        "allowed_days_of_month": {
+                          "additionalItems": false,
+                          "uniqueItems": true,
+                          "description": "Array with values from 1 through 31, corresponding to days of the month.",
+                          "items": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 31
+                          }
+                        },
+                        "disallowed_dates": {
+                          "description": "A blocklist of specific dates (YYYY-MM-DD) and date ranges (using API filtering style like YYYY-MM-DD..YYYY-MM-DD) to disallow.",
                           "uniqueItems": true,
                           "additionalItems": false,
                           "items": {

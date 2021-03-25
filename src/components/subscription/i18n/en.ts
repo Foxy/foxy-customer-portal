@@ -1,7 +1,7 @@
-import ordinal from "ordinal";
-import groupNumbers from "group-numbers";
+import { getRanges, parseDate, toLocaleList } from "../utils";
+
 import { Messages } from "../types";
-import { toLocaleList, parseDate } from "../utils";
+import ordinal from "ordinal";
 
 const pluralWeekdays = {
   1: "Mondays",
@@ -116,52 +116,37 @@ export const messages: Messages = {
   },
 
   nextDateDescription: rules => {
-    let result = "";
+    const result: string[] = [];
 
-    // days of week:  "You may choose Mondays – Wednesdays and Fridays."
-    // days of month: "You may choose the 1st, 3rd - 14th and 28th days of the month."
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(g => g.map(d => pluralWeekdays[d]).join("—"));
 
-    if ("allowedDays" in rules) {
-      result += "You may choose ";
-
-      const groups = groupNumbers(rules.allowedDays.days, false);
-
-      if (rules.allowedDays.type === "day") {
-        result += toLocaleList(
-          groups.map(group => group.map(day => pluralWeekdays[day]).join(" – "))
-        );
-      } else {
-        const dates = groups.map(group => group.map(ordinal).join(" – "));
-
-        result += `the ${toLocaleList(dates)} `;
-        result += `${dates.length === 1 ? "day" : "days"} of the month`;
-      }
-
-      result += ".";
+      // Example: "You may choose Mondays—Wednesdays and Fridays."
+      result.push(`You may choose ${toLocaleList(list)}.`);
     }
 
-    // first sentence:  "You can pick any date except June 3, June 13 and August 6 – September 1."
-    // second sentence: "The new date also can't be June 3, June 13 or August 6 – September 1."
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(group => group.map(ordinal).join("—"));
+      const tDates = toLocaleList(dates);
+      const tDay = dates.length === 1 ? "day" : "days";
 
-    if ("disallowedDates" in rules) {
-      const isFirst = result.length === 0;
-
-      result += isFirst
-        ? "You can pick any date except "
-        : " The new date also can't be ";
-
-      result += toLocaleList(
-        rules.disallowedDates.map(v => {
-          const range = v.split("..");
-          return range.map(v => messages.date(parseDate(v))).join(" – ");
-        }),
-        isFirst ? "and" : "or"
-      );
-
-      result += ".";
+      // Example: "Only the 1st, 3rd—14th and 28th days of the month are allowed."
+      result.push(`Only the ${tDates} ${tDay} of the month are allowed.`);
     }
 
-    return result;
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
+        const range = v.split("..");
+        return range.map(v => messages.date(parseDate(v))).join("—");
+      });
+
+      // Example: "You can pick any date except June 3, June 13 and August 6—September 1."
+      result.push(`You can pick any date except ${toLocaleList(list, "and")}.`);
+    }
+
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

@@ -1,9 +1,21 @@
+import { getRanges, parseDate, toLocaleList } from "../utils";
+
 import { Messages } from "../types";
 
 type LabelList = {
   1: String;
   2: String;
   n: String;
+};
+
+const weekdays = {
+  1: "Llun",
+  2: "Mawrth",
+  3: "Mercher",
+  4: "Iau",
+  5: "Gwener",
+  6: "Sadwrn",
+  7: "Sul"
 };
 
 export const messages: Messages = {
@@ -118,6 +130,39 @@ export const messages: Messages = {
       w: frequencyFactory({ 1: "wythnos", 2: "wythnos", n: "wythnos" }),
       d: frequencyFactory({ 1: "diwrnod", 2: "ddiwrnod", n: "diwrnod" })
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    const result: string[] = [];
+
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(r => r.map(d => weekdays[d]).join("—"));
+
+      // Example: "Diwrnodau ar gael: Llun—Mercher a Gwener."
+      result.push(`Diwrnodau ar gael: ${toLocaleList(list, "a")}.`);
+    }
+
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(r => r.join(" – "));
+      const tDates = toLocaleList(dates, "a");
+
+      // Example: "Dyddiadau'r mis sydd ar gael: 1, 3—14 a 28."
+      result.push(`Dyddiadau'r mis sydd ar gael: ${tDates}.`);
+    }
+
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
+        const range = v.split("..");
+        return range.map(v => messages.date(parseDate(v))).join("—");
+      });
+
+      // Example: "Ddim yn selectable Mehefin 3, Mehefin 13, a Awst 6—Medi 1."
+      result.push(`Ddim yn selectable ${toLocaleList(list, "a")}.`);
+    }
+
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

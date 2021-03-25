@@ -1,5 +1,3 @@
-import deepmerge from "deepmerge";
-
 import * as i18n from "../../mixins/i18n";
 import * as store from "../../mixins/store";
 import * as vaadin from "../../mixins/vaadin";
@@ -18,6 +16,7 @@ import { NextDatePicker } from "./partials/NextDatePicker";
 import { PaymentMethod } from "./partials/PaymentMethod";
 import { Summary } from "./partials/Summary";
 import { Transactions } from "./partials/Transactions";
+import deepmerge from "deepmerge";
 import { getCancelUrl } from "./utils";
 import { get as getCustomer } from "../../api";
 import { getParentPortal } from "../../assets/utils/getParentPortal";
@@ -286,8 +285,11 @@ export class Subscription implements Mixins {
   }
 
   private get _isNextDateEditable() {
-    return this._subscription?._embedded.template_config
-      .allow_next_date_modification;
+    const settings = this._subscription?._embedded.template_config;
+    const isEditable = settings?.allow_next_date_modification;
+    const isActive = this._subscription.is_active;
+
+    return isEditable && isActive;
   }
 
   render() {
