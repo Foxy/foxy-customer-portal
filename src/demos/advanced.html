@@ -21,20 +21,6 @@
         --foxy-primary-text-color: #2968a5;
         --foxy-font-family: "Raleway", sans-serif;
       }
-
-      .sdf-chip {
-        border: 1px solid var(--foxy-primary-color);
-        color: var(--foxy-primary-text-color);
-      }
-
-      .sdf-button {
-        background-color: var(--foxy-primary-color);
-        color: #fff;
-      }
-
-      .sdf-modal {
-        max-width: 320px;
-      }
     </style>
 
     <div id="customer-portal" class="container mx-auto sm:p-8">
@@ -51,7 +37,7 @@
           <div
             v-for="(attribute, index) in customer._embedded['fx:attributes']"
             :key="index"
-            class="m-1 py-1 px-4 rounded sdf-chip whitespace-no-wrap"
+            class="m-1 py-1 px-4 rounded whitespace-no-wrap"
           >
             {{ attribute.name }}: {{ attribute.value }}
           </div>
@@ -101,7 +87,7 @@
 
       <div v-if="modal" class="fixed inset-0 z-20 flex items-center justify-center">
         <div class="absolute inset-0 bg-black opacity-50"></div>
-        <div class="relative rounded bg-white p-4 m-4 sdf-modal">
+        <div class="relative rounded bg-white p-4 m-4">
           Success! Your points have been redeemed for a $10 coupon
           ({{ coupon }}), which has been applied to your cart already.
 
