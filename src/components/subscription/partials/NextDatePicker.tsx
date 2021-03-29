@@ -17,6 +17,7 @@ interface Props {
   i18n: Messages;
   errorRef: (el: VaadinNotification) => any;
   successRef: (el: VaadinNotification) => any;
+  validationErrorRef: (el: VaadinNotification) => any;
   confirmRef: (el: VaadinDialog) => any;
   onInvalidChanged: (newValue: boolean) => any;
   onChangeRequest: (newValue: string) => any;
@@ -170,6 +171,17 @@ export const NextDatePicker: FunctionalComponent<Props> = (props: Props) => {
         i18n={props.i18n}
         ref={props.errorRef}
         text={props.i18n.errorNotification}
+      />
+
+      <Notification
+        theme="error"
+        i18n={props.i18n}
+        ref={props.validationErrorRef}
+        text={
+          typeof nextDateConfig === "boolean"
+            ? props.i18n.errorNotification
+            : props.i18n.nextDateDescription(nextDateConfig)
+        }
       />
     </div>
   );

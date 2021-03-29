@@ -44,6 +44,7 @@ export class Subscription implements Mixins {
   private _nextDateConfirm: VaadinDialog;
   private _nextDateErrorAlert: VaadinNotification;
   private _nextDateSuccessAlert: VaadinNotification;
+  private _nextDateV8NErrorAlert: VaadinNotification;
 
   private _frequencyConfirm: VaadinDialog;
   private _frequencyErrorAlert: VaadinNotification;
@@ -197,8 +198,12 @@ export class Subscription implements Mixins {
 
         this._nextDateSuccessAlert?.open();
       } catch (e) {
-        console.error(e);
-        this._nextDateErrorAlert?.open();
+        if (e instanceof APIError && String(e.code) === "400") {
+          this._nextDateV8NErrorAlert?.open();
+        } else {
+          console.error(e);
+          this._nextDateErrorAlert?.open();
+        }
       } finally {
         this.busy = false;
       }
@@ -405,6 +410,7 @@ export class Subscription implements Mixins {
                     subscription={this._subscription}
                     errorRef={e => (this._nextDateErrorAlert = e)}
                     successRef={e => (this._nextDateSuccessAlert = e)}
+                    validationErrorRef={e => (this._nextDateV8NErrorAlert = e)}
                     confirmRef={e => (this._nextDateConfirm = e)}
                     disabled={!this._subscription.is_active || this.busy}
                     newValue={this.newNextDate}
