@@ -1,22 +1,21 @@
 /* eslint-disable @stencil/ban-side-effects */
 
+import { Address } from "../types/Address";
+import AddressSchema from "../schema/Address.json";
+import { Customer } from "../types/Customer";
+import CustomerSchema from "../schema/Customer.json";
+import { Link } from "../types/Link";
+import LinkSchema from "../schema/Link.json";
+import { PaymentMethod } from "../types/PaymentMethod";
+import PaymentMethodSchema from "../schema/PaymentMethod.json";
+import { Subscription } from "../types/Subscription";
+import SubscriptionSchema from "../schema/Subscription.json";
+import { Transaction } from "../types/Transaction";
+import TransactionSchema from "../schema/Transaction.json";
 import clone from "clone";
 import faker from "faker";
-import path from "path";
 import jsf from "json-schema-faker";
-
-import PaymentMethodSchema from "../schema/PaymentMethod.json";
-import SubscriptionSchema from "../schema/Subscription.json";
-import TransactionSchema from "../schema/Transaction.json";
-import CustomerSchema from "../schema/Customer.json";
-import AddressSchema from "../schema/Address.json";
-import LinkSchema from "../schema/Link.json";
-import { Address } from "../types/Address";
-import { Link } from "../types/Link";
-import { Customer } from "../types/Customer";
-import { Transaction } from "../types/Transaction";
-import { Subscription } from "../types/Subscription";
-import { PaymentMethod } from "../types/PaymentMethod";
+import path from "path";
 
 const cwd = path.resolve(__dirname, "../schema/");
 const template = new Array(12).fill(0);
@@ -122,11 +121,9 @@ export async function mockDatabase(url = "https://foxy.local/s/customer/") {
         item._embedded.template_config.allow_next_date_modification = {
           min: "2d", // can't change to a date earlier than 2 days from now
           max: "3m", // can't change to a date later than 3 months from now
-          allowedDays: {
-            type: "day", // allow only Mondays, Thursdays and Sundays
-            days: [1, 4, 7]
-          },
-          disallowedDates: [
+          allowed_days_of_week: [1, 4, 7], // allow only Mondays, Thursdays and Sundays
+          allowed_days_of_month: [14, 15, 16], // allow only 14, 15 and 16 days of the month
+          disallowed_dates: [
             fourDaysFromNow.toISOString().substr(0, 10), // disallow the date 4 days from now
             [nextWeekStart, nextWeekEnd]
               .map(v => v.toISOString().substr(0, 10))
