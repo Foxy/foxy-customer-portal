@@ -141,6 +141,7 @@ export const NextDatePicker: FunctionalComponent<Props> = (props: Props) => {
           typeof nextDateConfig.allowed_days_of_week === "object" ||
           typeof nextDateConfig.disallowed_dates === "object") && (
           <p
+            data-e2e="ndm-hint"
             class={{
               "leading-xs text-xs": true,
               "text-error": props.invalid,
