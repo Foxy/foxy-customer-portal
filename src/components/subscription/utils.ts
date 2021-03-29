@@ -4,7 +4,7 @@ import groupNumbers from "group-numbers";
 export function toLocaleList(items: string[], lastSeparator = "and") {
   let result = "";
 
-  if (items.length === 2) {
+  if (items.length <= 2) {
     result += items.join(` ${lastSeparator} `);
   } else {
     result += items.slice(0, items.length - 1).join(", ");
