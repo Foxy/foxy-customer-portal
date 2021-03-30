@@ -1,7 +1,9 @@
+import { PageEventObj } from "puppeteer";
 import { click } from "../../assets/utils/click";
-import { usePage } from "../../assets/utils/usePage";
-import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
 import { customer } from "../../assets/defaults";
+import faker from "faker";
+import { interceptAPIRequests } from "../../assets/utils/interceptAPIRequests";
+import { usePage } from "../../assets/utils/usePage";
 
 const tag = "foxy-customer-portal";
 
@@ -93,6 +95,58 @@ describe("HTMLFoxyCustomerPortalElement", () => {
 
         expect(await foxySignIn.isVisible()).toBe(true);
         expect(await root.callMethod("getState")).toMatchObject(customer());
+      });
+    });
+
+    it("signs out on 401", async () => {
+      await usePage(async ({ page }) => {
+        const interceptor = (e: PageEventObj["request"]) => {
+          if (e.isNavigationRequest() || Boolean(e.response())) return;
+          if (e.url().startsWith("https://foxy.local")) {
+            return e.respond({
+              contentType: "application/json",
+              status: 401,
+              body: JSON.stringify({
+                code: "401",
+                type: "other",
+                message: "This route is protected. Please login."
+              })
+            });
+          }
+          return e.continue();
+        };
+
+        page.on("request", interceptor);
+        await page.setRequestInterception(true);
+
+        await page.setCookie({
+          name: "fx.customer",
+          value: faker.random.alphaNumeric(128),
+          url: "http://localhost:8080"
+        });
+
+        await page.setContent(
+          `<${tag} endpoint="https://foxy.local"></${tag}>`
+        );
+
+        await page.waitForChanges();
+
+        const root = await page.find(tag);
+        const foxySignIn = await page.find(`${tag} >>> foxy-sign-in`);
+        const cookies = await page.cookies();
+        const cookie = cookies.find(v => v.name === "fx.customer");
+
+        if (typeof cookie === "undefined") {
+          expect(cookie).toBeUndefined();
+        } else {
+          expect(cookie.expires).toBe(-1);
+        }
+
+        expect(await foxySignIn.isVisible()).toBe(true);
+        expect(await root.callMethod("getState")).toMatchObject(customer());
+
+        page.off("request", interceptor);
+        await page.setRequestInterception(false);
       });
     });
 

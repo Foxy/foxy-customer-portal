@@ -1,30 +1,30 @@
+import * as i18n from "../../mixins/i18n";
+import * as store from "../../mixins/store";
+import * as vaadin from "../../mixins/vaadin";
+
 import {
   Component,
   Element,
-  State,
-  Prop,
-  h,
-  Watch,
-  Listen,
   Event,
   EventEmitter,
-  Method
+  Listen,
+  Method,
+  Prop,
+  State,
+  Watch,
+  h
 } from "@stencil/core";
-
-import * as vaadin from "../../mixins/vaadin";
-import * as store from "../../mixins/store";
-import * as i18n from "../../mixins/i18n";
-import { i18nProvider } from "./i18n";
-
+import { FullGetResponse, get as getCustomer } from "../../api";
+import { Messages, Tab } from "./types";
 import {
-  reset as resetAuthCookie,
-  check as isSignedIn
+  check as isSignedIn,
+  reset as resetAuthCookie
 } from "../../api/authenticate";
 
-import { FullGetResponse, get as getCustomer } from "../../api";
+import { APIError } from "../../api/utils";
 import { Details } from "../Details";
-import { Messages, Tab } from "./types";
 import { Skeleton } from "../Skeleton";
+import { i18nProvider } from "./i18n";
 
 /**
  * @part transaction-id - Targets each cell in the ID column of the nested `foxy-transactions` element.
@@ -181,7 +181,13 @@ export class CustomerPortal
           transactions: { items: true }
         }
       });
-    } catch (e) {}
+    } catch (e) {
+      if (e instanceof APIError && String(e.code) === "401") {
+        await this.signOut();
+      } else {
+        console.error(e);
+      }
+    }
 
     return customer;
   }
