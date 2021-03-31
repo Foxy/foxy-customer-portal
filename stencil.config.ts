@@ -9,6 +9,7 @@ import cssnano from "cssnano";
 
 export const config: Config = {
   namespace: "foxy",
+  buildEs5: "prod",
   globalScript: "src/preflight.ts",
   testing: {
     browserArgs: ["--no-sandbox"]
