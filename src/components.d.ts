@@ -175,9 +175,17 @@ export namespace Components {
          */
         "getState": (forceReload?: boolean) => Promise<any>;
         /**
+          * Max number of displayed items.
+         */
+        "limit": number;
+        /**
           * The language to display element content in.
          */
         "locale": any;
+        /**
+          * Current offset.
+         */
+        "offset": number;
         /**
           * Sets customer object.
          */
@@ -413,9 +421,21 @@ declare namespace LocalJSX {
          */
         "endpoint"?: string;
         /**
+          * Max number of displayed items.
+         */
+        "limit"?: number;
+        /**
           * The language to display element content in.
          */
         "locale"?: any;
+        /**
+          * Current offset.
+         */
+        "offset"?: number;
+        /**
+          * Fired when offset or limit change. Current state is available from `event.detail`, limit and offset from the respective properties on `event.currentTarget`.
+         */
+        "onNavigation"?: (event: CustomEvent<FullGetResponse>) => void;
         /**
           * Fired when component becomes ready to be interacted with.
          */

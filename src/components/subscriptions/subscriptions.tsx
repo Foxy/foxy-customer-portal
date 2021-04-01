@@ -1,5 +1,4 @@
 import deepmerge from "deepmerge";
-
 import * as i18n from "../../mixins/i18n";
 import * as store from "../../mixins/store";
 import * as vaadin from "../../mixins/vaadin";
@@ -30,8 +29,6 @@ type StoreMixin = store.Mixin<
 })
 export class Subscriptions
   implements vaadin.Mixin, StoreMixin, i18n.Mixin<typeof i18nProvider> {
-  private readonly limit = 4;
-
   @State() state = store.defaults.state.call(this) as FullGetResponse;
   @State() i18nProvider = i18nProvider;
   @State() i18n = i18nProvider.en;
@@ -39,7 +36,6 @@ export class Subscriptions
   @State() error = "";
   @State() isErrorDismissable = false;
 
-  @State() start = 0;
   @State() hasMore = true;
   @State() isLoadingNext = false;
 
@@ -61,6 +57,30 @@ export class Subscriptions
   onLocaleChange(newValue: string) {
     i18n.onLocaleChange.call(this, newValue);
   }
+
+  /** Current offset. */
+  @Prop({ mutable: true }) offset = 0;
+
+  @Watch("offset")
+  onOffsetChange() {
+    this.navigation.emit();
+  }
+
+  /** Max number of displayed items. */
+  @Prop() limit = 4;
+
+  @Watch("limit")
+  onLimitChange() {
+    this.navigation.emit();
+  }
+
+  /**
+   * Fired when offset or limit change.
+   * Current state is available from `event.detail`, limit and offset
+   * from the respective properties on `event.currentTarget`.
+   */
+  @Event({ eventName: "navigation" })
+  readonly navigation: EventEmitter<FullGetResponse>;
 
   /**
    * Emitted after the component makes changes to the
@@ -144,7 +164,7 @@ export class Subscriptions
 
     if (itemsLength < this.limit) {
       this.hasMore = false;
-      this.start = 0;
+      this.offset = 0;
     } else {
       this.hasMore = true;
     }
@@ -158,7 +178,7 @@ export class Subscriptions
 
   private async navigate(direction: "back" | "forward" = "forward") {
     const total = this.state._embedded["fx:subscriptions"].length;
-    const newOffset = this.start + this.limit * 2;
+    const newOffset = this.offset + this.limit * 2;
 
     if (direction === "forward" && newOffset > total) {
       this.isLoadingNext = true;
@@ -175,7 +195,7 @@ export class Subscriptions
           ...res._embedded["fx:subscriptions"]
         );
 
-        this.start += res.returned_items > 0 ? this.limit : 0;
+        this.offset += res.returned_items > 0 ? this.limit : 0;
         this.hasMore = res.returned_items + res.offset < res.total_items;
         this.isLoadingNext = false;
       } catch (e) {
@@ -188,7 +208,7 @@ export class Subscriptions
 
       await this.setState(newState);
     } else {
-      this.start += (direction === "back" ? -1 : 1) * this.limit;
+      this.offset += (direction === "back" ? -1 : 1) * this.limit;
     }
 
     this.scrollIntoView();
@@ -207,7 +227,7 @@ export class Subscriptions
   }
 
   private get displayedSubscriptions() {
-    return this.subscriptions.slice(this.start, this.start + this.limit);
+    return this.subscriptions.slice(this.offset, this.offset + this.limit);
   }
 
   render() {
@@ -241,7 +261,7 @@ export class Subscriptions
         <vaadin-button
           class="m-m"
           data-e2e="btn-prev"
-          disabled={this.start === 0 || this.isLoadingNext}
+          disabled={this.offset === 0 || this.isLoadingNext}
           onClick={() => this.navigate("back")}
         >
           <iron-icon icon="icons:chevron-left" slot="prefix" />
@@ -250,7 +270,7 @@ export class Subscriptions
 
         <vaadin-button
           disabled={
-            this.start + this.limit > this.subscriptions.length ||
+            this.offset + this.limit > this.subscriptions.length ||
             this.isLoadingNext ||
             this.hasMore === false
           }
