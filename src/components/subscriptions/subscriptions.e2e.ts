@@ -48,6 +48,9 @@ describe("HTMLFoxySubscriptionsElement", () => {
         const parent = await page.find(tag);
         const elements = await page.findAll(`${tag} >>> foxy-subscription`);
 
+        expect(await parent.getProperty("offset")).toBe(0);
+        expect(await parent.getProperty("limit")).toBe(elements.length);
+
         expect(elements.length).toBeGreaterThan(0);
         expect(elements.length).toBeLessThanOrEqual(db.subscriptions.length);
 
@@ -93,6 +96,9 @@ describe("HTMLFoxySubscriptionsElement", () => {
         let elements = await page.findAll(`${tag} >>> foxy-subscription`);
         let offset = elements.length;
 
+        expect(await parent.getProperty("offset")).toBe(0);
+        expect(await parent.getProperty("limit")).toBe(elements.length);
+
         await click(page, `${tag} >>> [data-e2e=btn-next]`);
         await page.waitForChanges();
 
@@ -101,11 +107,17 @@ describe("HTMLFoxySubscriptionsElement", () => {
           await shouldDisplay(child, parent, db.subscriptions[offset + i]);
         }
 
+        expect(await parent.getProperty("offset")).toBe(offset);
+        expect(await parent.getProperty("limit")).toBe(elements.length);
+
         await click(page, `${tag} >>> [data-e2e=btn-prev]`);
         await page.waitForChanges();
 
         offset -= elements.length;
         elements = await page.findAll(`${tag} >>> foxy-subscription`);
+
+        expect(await parent.getProperty("offset")).toBe(0);
+        expect(await parent.getProperty("limit")).toBe(elements.length);
 
         for (let i = 0; i < elements.length; ++i) {
           const child = elements[i];
