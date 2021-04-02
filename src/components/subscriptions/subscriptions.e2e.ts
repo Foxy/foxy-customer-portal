@@ -66,7 +66,7 @@ describe("HTMLFoxySubscriptionsElement", () => {
         await page.waitForChanges();
 
         const element = await page.find(`${tag} >>> foxy-subscription`);
-        expect(element).toHaveAttribute("open");
+        expect(await element.getProperty("open")).toBe(true);
       });
     });
 
