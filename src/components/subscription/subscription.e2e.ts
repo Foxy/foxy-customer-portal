@@ -181,8 +181,10 @@ describe("HTMLFoxySubscriptionElement", () => {
         activateSubscription(subscription);
 
         await signIn();
-        await page.setContent(content);
-        await page.waitForEvent("ready");
+        await Promise.all([
+          page.waitForEvent("ready"),
+          page.setContent(content)
+        ]);
 
         const subModifySelector = `${tag} >>> a[href="${SUB_MODIFY_URL}"]`;
         const subModifyLink = await page.find(subModifySelector);
