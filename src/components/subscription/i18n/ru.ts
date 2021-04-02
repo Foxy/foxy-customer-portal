@@ -1,3 +1,5 @@
+import { getRanges, parseDate, toLocaleList } from "../utils";
+
 import { Messages } from "../types";
 
 /**
@@ -15,6 +17,16 @@ function pluralize(n: number, accP: string, genP: string, accS: string) {
   if (p1 === 0 || (p1 > 4 && p1 < 10) || (p2 > 10 && p2 < 15)) return genP;
   return p1 > 1 && p1 < 5 ? accP : accS;
 }
+
+const weekdays = {
+  1: "понедельник",
+  2: "вторник",
+  3: "среда",
+  4: "четверг",
+  5: "пятница",
+  6: "суббота",
+  7: "воскресенье"
+};
 
 export const messages: Messages = {
   ok: "Сохранить",
@@ -117,6 +129,39 @@ export const messages: Messages = {
       w: (n: number) => `${n} ${pluralize(n, "недели", "недель", "неделю")}`,
       d: (n: number) => `${n} ${pluralize(n, "дня", "дней", "день")}`
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    const result: string[] = [];
+
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(r => r.map(d => weekdays[d]).join("—"));
+
+      // Example: "Доступные дни: понедельник—среда и пятница."
+      result.push(`Доступные дни: ${toLocaleList(list, "и")}.`);
+    }
+
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(r => r.join(" по "));
+      const tDates = toLocaleList(dates, "и");
+
+      // Example: "Доступные числа: 1, 3 по 14 и 28."
+      result.push(`Доступные числа: ${tDates}.`);
+    }
+
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
+        const range = v.split("..");
+        return range.map(v => messages.date(parseDate(v))).join("—");
+      });
+
+      // Example: "Нельзя выбрать 3 июня, 13 июня и 6 августа—1 сентября."
+      result.push(`Нельзя выбрать ${toLocaleList(list, "и")}.`);
+    }
+
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

@@ -1,4 +1,17 @@
+import { getRanges, parseDate, toLocaleList } from "../utils";
+
 import { Messages } from "../types";
+import ordinal from "ordinal";
+
+const pluralWeekdays = {
+  1: "Mondays",
+  2: "Tuesdays",
+  3: "Wednesdays",
+  4: "Thursdays",
+  5: "Fridays",
+  6: "Saturdays",
+  7: "Sundays"
+};
 
 export const messages: Messages = {
   ok: "OK",
@@ -100,6 +113,40 @@ export const messages: Messages = {
       w: (n: number) => (n > 1 ? `${n} weeks` : "week"),
       d: (n: number) => (n > 1 ? `${n} days` : "day")
     }[period](count);
+  },
+
+  nextDateDescription: rules => {
+    const result: string[] = [];
+
+    if (Boolean(rules.allowed_days_of_week)) {
+      const ranges = getRanges(rules.allowed_days_of_week);
+      const list = ranges.map(g => g.map(d => pluralWeekdays[d]).join("—"));
+
+      // Example: "You may choose Mondays—Wednesdays and Fridays."
+      result.push(`You may choose ${toLocaleList(list)}.`);
+    }
+
+    if (Boolean(rules.allowed_days_of_month)) {
+      const ranges = getRanges(rules.allowed_days_of_month);
+      const dates = ranges.map(group => group.map(ordinal).join("—"));
+      const tDates = toLocaleList(dates);
+      const tDay = dates.length === 1 ? "day" : "days";
+
+      // Example: "Only the 1st, 3rd—14th and 28th days of the month are allowed."
+      result.push(`Only the ${tDates} ${tDay} of the month are allowed.`);
+    }
+
+    if (Boolean(rules.disallowed_dates)) {
+      const list = rules.disallowed_dates.map(v => {
+        const range = v.split("..");
+        return range.map(v => messages.date(parseDate(v))).join("—");
+      });
+
+      // Example: "You can pick any date except June 3, June 13 and August 6—September 1."
+      result.push(`You can pick any date except ${toLocaleList(list, "and")}.`);
+    }
+
+    return result.join(" ");
   },
 
   nextDateConfirm: date =>

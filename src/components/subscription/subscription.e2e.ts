@@ -265,7 +265,7 @@ describe("HTMLFoxySubscriptionElement", () => {
       });
     });
 
-    it("allows changing next transaction date", async () => {
+    it("allows changing next transaction date if it's valid", async () => {
       await interceptAPIRequests(async ({ db, url, page, signIn }) => {
         const subscription = db.subscriptions[0];
         const content = `<${tag} locale="en" endpoint="${url}"></${tag}>`;
@@ -303,6 +303,57 @@ describe("HTMLFoxySubscriptionElement", () => {
 
         expect(await picker.getProperty("value")).toBe(newValue);
         expect(subscription.next_transaction_date).toBe(newDate.toISOString());
+      });
+    });
+
+    it("doesn't allow changing next transaction date if it isn't valid", async () => {
+      await interceptAPIRequests(async ({ db, url, page, signIn }) => {
+        const subscription = db.subscriptions[1];
+        const link = subscription._links.self.href;
+        const content = `<${tag} locale="en" endpoint="${url}" link="${link}"></${tag}>`;
+        const config = subscription._embedded.template_config;
+        const rules = config.allow_next_date_modification as any;
+
+        activateSubscription(subscription);
+
+        await signIn();
+        await page.setContent(content);
+        await page.waitForEvent("ready");
+        await page.evaluate(
+          (tag, newValue) => {
+            const root = document.querySelector(tag);
+            const picker = root.shadowRoot.querySelector("[data-e2e=fld-date]");
+            picker.value = newValue;
+            picker.dispatchEvent(new Event("change"));
+          },
+          tag,
+          rules.disallowed_dates[0]
+        );
+
+        const whenConfirmOpen = page.waitForSelector("[data-e2e=btn-ok]", {
+          timeout: 5000
+        });
+
+        await expect(whenConfirmOpen).rejects.toThrow();
+      });
+    });
+
+    it("displays next transaction date rules when present", async () => {
+      await interceptAPIRequests(async ({ db, url, page, signIn }) => {
+        const subscription = db.subscriptions[1];
+        const link = subscription._links.self.href;
+        const content = `<${tag} locale="en" endpoint="${url}" link="${link}"></${tag}>`;
+        const config = subscription._embedded.template_config;
+        const rules = config.allow_next_date_modification as any;
+
+        activateSubscription(subscription);
+
+        await signIn();
+        await page.setContent(content);
+        await page.waitForEvent("ready");
+
+        const hint = await page.find(`${tag} >>> [data-e2e="ndm-hint"]`);
+        expect(hint.textContent).toBe(messages.nextDateDescription(rules));
       });
     });
 
