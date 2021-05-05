@@ -34,13 +34,14 @@ const cover: Record<System, string> = {
 };
 
 function getLast4Digits(paymentMethod: DefaultPaymentMethod) {
+  if (paymentMethod.cc_number_masked === null) return "";
   return paymentMethod.cc_number_masked.substring(
     paymentMethod.cc_number_masked.length - 4
   );
 }
 
 function getSystem(paymentMethod: DefaultPaymentMethod) {
-  const system = paymentMethod.cc_type.toLowerCase();
+  const system = paymentMethod.cc_type?.toLowerCase() ?? "";
   return system in cover ? (system as System) : "unknown";
 }
 
