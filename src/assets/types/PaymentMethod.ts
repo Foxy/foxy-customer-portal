@@ -25,17 +25,17 @@ export type PaymentMethod = {
   /**
    * The credit card or debit card type. This will be determined automatically once the payment card is saved.
    */
-  cc_type: string;
+  cc_type: string | null;
   /**
    * A masked version of this payment card showing only the last 4 digits.
    */
-  cc_number_masked: string;
+  cc_number_masked: string | null;
   /**
    * The payment card expiration month in the MM format.
    */
-  cc_exp_month: string;
+  cc_exp_month: string | null;
   /**
    * The payment card expiration year in the YYYY format.
    */
-  cc_exp_year: string;
+  cc_exp_year: string | null;
 };

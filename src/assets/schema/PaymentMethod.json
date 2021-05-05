@@ -15,22 +15,22 @@
         },
         "cc_type": {
           "description": "The credit card or debit card type. This will be determined automatically once the payment card is saved.",
-          "type": "string",
+          "type": ["string", "null"],
           "examples": ["Visa", "MasterCard", "Maestro", "Discovery", "JCB", "UnionPay"]
         },
         "cc_number_masked": {
           "description": "A masked version of this payment card showing only the last 4 digits.",
-          "type": "string",
+          "type": ["string", "null"],
           "faker": "finance.mask"
         },
         "cc_exp_month": {
           "description": "The payment card expiration month in the MM format.",
-          "type": "string",
+          "type": ["string", "null"],
           "pattern": "^(0[1-9])|(1[1-2])$"
         },
         "cc_exp_year": {
           "description": "The payment card expiration year in the YYYY format.",
-          "type": "string",
+          "type": ["string", "null"],
           "pattern": "^202[0-9]$"
         }
       },
