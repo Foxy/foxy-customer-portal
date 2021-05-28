@@ -74,31 +74,22 @@ function createDataTable<T>(): FunctionalComponent<Props<T>> {
         onClick={() => props.navigate("back")}
       >
         <iron-icon icon="icons:chevron-left" slot="prefix" />
-        <Skeleton
-          loaded={Boolean(props.messages)}
-          text={() => props.messages.previous}
-        />
+        {props.messages?.previous ?? ""}
       </vaadin-button>
 
       <vaadin-button
         disabled={
-          props.start + props.limit >= props.items.length ||
-          props.items.length < props.limit ||
           props.isLoadingNext ||
-          !props.hasMore
+          (props.start + props.limit >= props.items.length && !props.hasMore)
         }
         class="m-m"
         data-e2e="btn-next"
-        data-theme={props.isLoadingNext ? "tertiary" : "secondary"}
         onClick={() => props.navigate("forward")}
       >
         {props.isLoadingNext ? (
           <vaadin-progress-bar class="w-xl" indeterminate />
         ) : (
-          <Skeleton
-            loaded={Boolean(props.messages)}
-            text={() => props.messages.next}
-          />
+          props.messages?.next ?? ""
         )}
         <iron-icon icon="icons:chevron-right" slot="suffix" />
       </vaadin-button>

@@ -177,26 +177,29 @@ export class Subscriptions
   }
 
   private async navigate(direction: "back" | "forward" = "forward") {
-    const total = this.state._embedded["fx:subscriptions"].length;
+    let loadedCount = this.state._embedded["fx:subscriptions"].length;
     const newOffset = this.offset + this.limit * 2;
 
-    if (direction === "forward" && newOffset > total) {
+    if (direction === "forward" && newOffset > loadedCount) {
       this.isLoadingNext = true;
-      const newState = deepmerge({}, this.state);
 
       try {
+        const newState = deepmerge({}, this.state);
         const endpoint = `${this.resolvedEndpoint}/subscriptions`;
         const res = await getSubscriptions(endpoint, {
-          offset: total,
-          limit: this.limit - (total % this.limit)
+          offset: loadedCount,
+          limit: this.limit - (loadedCount % this.limit)
         });
 
         newState._embedded["fx:subscriptions"].push(
           ...res._embedded["fx:subscriptions"]
         );
 
-        this.offset += res.returned_items > 0 ? this.limit : 0;
-        this.hasMore = res.returned_items + res.offset < res.total_items;
+        await this.setState(newState);
+        loadedCount = newState._embedded["fx:subscriptions"].length;
+
+        if (this.offset + this.limit < loadedCount) this.offset += this.limit;
+        this.hasMore = loadedCount < res.total_items;
         this.isLoadingNext = false;
       } catch (e) {
         console.error(e);
@@ -205,8 +208,6 @@ export class Subscriptions
         this.error = e instanceof APIError ? e.message : localMessage;
         this.isErrorDismissable = true;
       }
-
-      await this.setState(newState);
     } else {
       this.offset += (direction === "back" ? -1 : 1) * this.limit;
     }
@@ -270,13 +271,12 @@ export class Subscriptions
 
         <vaadin-button
           disabled={
-            this.offset + this.limit > this.subscriptions.length ||
             this.isLoadingNext ||
-            this.hasMore === false
+            (this.offset + this.limit >= this.subscriptions.length &&
+              !this.hasMore)
           }
           class="m-m"
           data-e2e="btn-next"
-          data-theme={this.isLoadingNext ? "tertiary" : "secondary"}
           onClick={() => this.navigate("forward")}
         >
           {this.isLoadingNext ? (

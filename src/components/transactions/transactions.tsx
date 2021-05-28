@@ -165,13 +165,13 @@ export class Transactions
 
   private async navigate(direction: "back" | "forward" = "forward") {
     const total = this.state._embedded["fx:transactions"].length;
-    const newOffset = this.start + this.limit * 2;
+    let loadedCount = this.start + this.limit * 2;
 
-    if (direction === "forward" && newOffset > total) {
+    if (direction === "forward" && loadedCount > total) {
       this.isLoadingNext = true;
-      const newState = deepmerge({}, this.state) as any;
 
       try {
+        const newState = deepmerge({}, this.state) as any;
         const endpoint = `${this.resolvedEndpoint}/transactions`;
         const res = await getTransactions(endpoint, {
           offset: total,
@@ -183,8 +183,11 @@ export class Transactions
           ...res._embedded["fx:transactions"]
         );
 
-        this.start += res.returned_items > 0 ? this.limit : 0;
-        this.hasMore = res.returned_items + res.offset < res.total_items;
+        await this.setState(newState);
+        loadedCount = newState._embedded["fx:transactions"].length;
+
+        if (this.start + this.limit < loadedCount) this.start += this.limit;
+        this.hasMore = loadedCount < res.total_items;
         this.isLoadingNext = false;
       } catch (e) {
         console.error(e);
@@ -194,8 +197,6 @@ export class Transactions
         this.error = e instanceof APIError ? e.message : localMessage;
         this.isErrorDismissable = true;
       }
-
-      await this.setState(newState);
     } else {
       this.start += (direction === "back" ? -1 : 1) * this.limit;
     }
